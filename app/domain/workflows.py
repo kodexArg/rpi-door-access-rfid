@@ -14,41 +14,31 @@ def log_access(db: Session, account_id: str, event_type: str, reason: str = None
     db.add(log_entry)
     db.commit()
 
-def grant_access(db: Session, account: AccountModel, green_led: LedIndicator, buzzer: Buzzer, relay: DoorRelay) -> None:
-    # Action Sequence:
-    # 1. Emits 1 positive Beep.
+def grant_access(db: Session, account: AccountModel, green_led: LedIndicator, buzzer: Buzzer, relay: DoorRelay, verbose: bool = False) -> None:
+    if verbose:
+        print(f"[SWIPE] ACCESS GRANTED — account={account.account_id}, credits={account.credits} → {account.credits - 1}")
     buzzer.beep(times=1, duration=0.2)
-    # 2. Activate Green LED.
     green_led.on()
-    
     try:
-        # 3. Trigger Relay
         relay.trigger(seconds=5.0)
     finally:
         green_led.off()
-        
-    # Decrement credits
     account.credits -= 1
     db.commit()
-    
-    # Log Access
     log_access(db, account.account_id, "grant")
 
 
-def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator, buzzer: Buzzer) -> None:
+def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator, buzzer: Buzzer, verbose: bool = False) -> None:
+    if verbose:
+        print(f"[SWIPE] ACCESS DENIED — card={account_id}, reason={reason}")
     if reason == "Out of Credits":
         buzzer.beep(times=3, duration=0.2)
     else:
-        buzzer.beep(times=1, duration=0.5) # Different error beep
-        
+        buzzer.beep(times=1, duration=0.5)
     red_led.on()
-    # Keep door locked (do nothing)
-    # Usually we might wait a bit so the LED stays on
     import time
     time.sleep(1.0)
     red_led.off()
-
-    # Log denial
     log_access(db, account_id, "deny", reason)
 
 
@@ -58,27 +48,35 @@ def process_swipe(
     green_led: LedIndicator,
     red_led: LedIndicator,
     buzzer: Buzzer,
-    relay: DoorRelay
+    relay: DoorRelay,
+    verbose: bool = False,
 ) -> Dict[str, Any]:
-    
+
+    if verbose:
+        print(f"[SWIPE] Looking up card: {card_id}")
+
     account = db.query(AccountModel).filter(AccountModel.account_id == card_id).first()
-    
+
     if not account:
-        deny_access(db, card_id, "Not Found", red_led, buzzer)
+        if verbose:
+            print(f"[SWIPE] Card {card_id} not found in DB")
+        deny_access(db, card_id, "Not Found", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Not Found"}
-        
+
+    if verbose:
+        print(f"[SWIPE] Account found — id={account.account_id}, status={account.status}, credits={account.credits}, expires={account.expiration_date}")
+
     if account.status != "active":
-        deny_access(db, card_id, "Invalid Status", red_led, buzzer)
+        deny_access(db, card_id, "Invalid Status", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Invalid Status"}
-        
+
     if account.expiration_date < datetime.datetime.utcnow():
-        deny_access(db, card_id, "Expired", red_led, buzzer)
+        deny_access(db, card_id, "Expired", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Expired"}
-        
+
     if account.credits <= 0:
-        deny_access(db, card_id, "Out of Credits", red_led, buzzer)
+        deny_access(db, card_id, "Out of Credits", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Out of Credits"}
-        
-    # All validations passed
-    grant_access(db, account, green_led, buzzer, relay)
+
+    grant_access(db, account, green_led, buzzer, relay, verbose)
     return {"status": "granted"}
