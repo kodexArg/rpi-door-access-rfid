@@ -13,9 +13,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 @router.post("/api/login")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    # Here we simulate user validation. We only accept "admin" context for this local API.
-    # The form_data.username can be arbitrary, but password MUST match settings.ADMIN_PASSWORD
-    if form_data.password != settings.ADMIN_PASSWORD:
+    if form_data.password != settings.SUPER_PASSWORD:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -37,7 +35,7 @@ def ui_login(
     username: str = Form("admin"),
     password: str = Form(...),
 ):
-    if password != settings.ADMIN_PASSWORD:
+    if password != settings.SUPER_PASSWORD:
         # Redirect back to login upon failure, ideally with an error context
         # But for simplicity, we just redirect.
         return RedirectResponse(url="/login?error=1", status_code=status.HTTP_303_SEE_OTHER)

@@ -1,7 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    ADMIN_PASSWORD: str = "admin"
+    SUPER_USER: str = "admin"
+    SUPER_PASSWORD: str
     JWT_SECRET_KEY: str = "secret"
     DATABASE_URL: str = "sqlite:///./rpi_door_access.db"
     
