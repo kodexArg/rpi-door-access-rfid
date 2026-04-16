@@ -29,7 +29,7 @@ def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 @router.get("/login", response_class=HTMLResponse)
 def login_page(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+    return templates.TemplateResponse(request, "login.html")
 
 @router.post("/ui/login")
 def ui_login(

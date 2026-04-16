@@ -53,7 +53,7 @@ def index(request: Request, db: Session = Depends(get_db), admin: str = Depends(
     if not admin:
         return RedirectResponse(url="/login", status_code=303)
     accounts = db.query(AccountModel).all()
-    return templates.TemplateResponse("index.html", {"request": request, "accounts": accounts})
+    return templates.TemplateResponse(request, "index.html", {"accounts": accounts})
 
 @router.post("/ui/accounts/create")
 def ui_create_account(
