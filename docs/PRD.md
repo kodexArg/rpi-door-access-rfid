@@ -14,14 +14,15 @@ IoT application for a Raspberry Pi designed to manage a door access system using
 ## Software Components
 - **Language:** Python
 - **API and UI Backend:** FastAPI
-- **Databases:** SQLite (three distinct tables/uses detailed below)
+- **Databases:** SQLite (embedded local DB handling Accounts, Users, Companies, Logs)
 
 ## System Workflows
 
 ### 1. Door Access Validation Flow
 1. **Trigger:** The system reads an RFID card access swipe.
 2. **Account Validation (Private DB):**
-   - The system checks an embedded private SQLite database for the scanned ID.
+   - The system checks an embedded private SQLite database for the scanned ID (`Account`).
+   - The `Account` is tied to a `User` (first and last name, email) who belongs to a `Company`.
    - If **Found**:
      - Check the `account_status` column. Must be Active.
      - Check the `expiration_date` column. Must not be expired.
@@ -51,6 +52,7 @@ IoT application for a Raspberry Pi designed to manage a door access system using
    - Serves a simple local dashboard (`http://localhost`) providing CRUD capabilities.
    - Allows loading and managing RFID IDs.
    - Allows users to recharge, edit credits, modify expiration dates, and activate/deactivate statuses.
+   - Allows managing Users and Companies and linking multiple RFIDs to a single User.
    - Exposes a RESTful API layer out of the box because of FastAPI usage.
  
 ### 3. AWS Synchronization

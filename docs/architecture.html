@@ -72,9 +72,10 @@
 
     <div class="section">
         <h2>5. Gestión de Datos</h2>
-        <p>El almacenamiento se gestiona localmente de forma desconectada mediante <b>SQLite</b>, definiendo tres casos de uso o tablas clave:</p>
+        <p>El almacenamiento se gestiona localmente de forma desconectada mediante <b>SQLite</b>, definiendo las siguientes tablas clave:</p>
         <ol>
-            <li><b>Validación (Private DB):</b> Almacena IDs del RFID, estado de la cuenta (activo/inactivo), fechas de expiración y saldo actual de créditos.</li>
+            <li><b>Validación de Tarjetas (Cards/Accounts):</b> Almacena IDs del RFID, estado de la cuenta (activo/inactivo), fechas de expiración, saldo de créditos y la llave foránea al Usuario principal.</li>
+            <li><b>Usuarios (Users) y Empresas (Companies):</b> Estructuras relacionadas relacionalmente para mantener los nombres, apellidos y organizaciones (una Empresa tiene M Usuarios, un Usuario tiene N Tarjetas).</li>
             <li><b>Logs Cíclicos:</b> Registro de todo intento de lectura de tarjeta (concedida o denegada) para auditoría.</li>
             <li><b>Tracking de Límites:</b> Registro histórico particularizado de la métrica y recuentos de uso o límites diarios.</li>
         </ol>

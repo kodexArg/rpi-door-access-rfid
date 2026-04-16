@@ -13,7 +13,9 @@ Colloquial terminology will map between the concepts in English code and the rea
 
 | English Code Entity | Spanish Colloquial | Definition |
 | :--- | :--- | :--- |
-| `Account` / `UserAccount` | Cuenta de Usuario | The entity representing a person/card holder. Stored in SQLite. |
+| `Company` / `CompanyModel` | Empresa | The entity representing a company. |
+| `User` / `UserModel` | Usuario | The entity representing a person. Associated to a Company. Can have multiple Accounts. |
+| `Account` / `AccountModel` | Cuenta / Tarjeta | The entity representing an access card. Stored in SQLite. Belongs to a User (`user_id`). |
 | `AccessLog` | Log de Acceso / Historial | The entity tracking each time a card is scanned, granted, or denied. |
 | `CreditCount` | Límite de Usos / Créditos | The remaining valid accesses an `Account` has. |
 | `RFIDCard` / `CardID` | Tarjeta / Llavero RFID | The physical object scanned by the reader. Its UID is the primary identifier. |
