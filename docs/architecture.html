@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arquitectura de Software - RPi Door Access RFID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px auto;
+            color: #333;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        h1, h2, h3 {
+            color: #0056b3;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        ul, ol {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Arquitectura de Software: RPi Door Access RFID</h1>
+
+    <div class="section">
+        <h2>1. Visión General</h2>
+        <p>El sistema es una aplicación IoT desplegada en una Raspberry Pi para gestionar el acceso a una puerta mediante tecnología RFID. El software está diseñado bajo los principios <b>SOLID</b> y conceptos de <b>Clean Architecture</b>, asegurando un sistema robusto, modular y altamente testeable sin necesidad de tener el hardware físico acoplado durante el desarrollo.</p>
+    </div>
+
+    <div class="section">
+        <h2>2. Stack Tecnológico</h2>
+        <ul>
+            <li><b>Lenguaje básico:</b> Python 3</li>
+            <li><b>Framework Web y API:</b> FastAPI</li>
+            <li><b>Base de Datos:</b> SQLite (local)</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>3. Capas de la Arquitectura</h2>
+        <p>El código está organizado de manera limpia en múltiples capas (reflejadas en la estructura de la carpeta <code>app/</code>):</p>
+        <ul>
+            <li><b>Domain (Dominio):</b> Contiene las entidades y las reglas de negocio puras. Esta capa es independiente del hardware, el framework web o de la base de datos (por ejemplo, lógica de validación de créditos).</li>
+            <li><b>Infrastructure (Infraestructura):</b> Implementaciones concretas de acceso a los datos (SQLite) y controladores de hardware (GPIO para LED, Buzzer, Relé, Lector RFID).</li>
+            <li><b>Core:</b> Módulos de configuración, inyección de dependencias y utilidades compartidas siguiendo el principio DRY.</li>
+            <li><b>API:</b> Endpoints y controladores de FastAPI que exponen servicios REST y sirven la interfaz web local.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>4. Abstracción de Hardware y Principios SOLID</h2>
+        <p>Siguiendo estrictamente el principio <i>Open/Closed</i>, toda la lógica que interactúa con el hardware físico ha sido abstraída a través de interfaces o clases abstractas:</p>
+        <ul>
+            <li><code>LedController</code></li>
+            <li><code>BuzzerController</code></li>
+            <li><code>RelayController</code></li>
+            <li><code>RFIDScanner</code></li>
+        </ul>
+        <p>Estas abstracciones se inyectan en las clases de servicio. Esto aísla el comportamiento técnico de la Pi de la lógica de evaluación de accesos y la manipulación de base de datos, facilitando migraciones en un futuro (ej. de GPIO clásico a I2C).</p>
+    </div>
+
+    <div class="section">
+        <h2>5. Gestión de Datos</h2>
+        <p>El almacenamiento se gestiona localmente de forma desconectada mediante <b>SQLite</b>, definiendo tres casos de uso o tablas clave:</p>
+        <ol>
+            <li><b>Validación (Private DB):</b> Almacena IDs del RFID, estado de la cuenta (activo/inactivo), fechas de expiración y saldo actual de créditos.</li>
+            <li><b>Logs Cíclicos:</b> Registro de todo intento de lectura de tarjeta (concedida o denegada) para auditoría.</li>
+            <li><b>Tracking de Límites:</b> Registro histórico particularizado de la métrica y recuentos de uso o límites diarios.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>6. Escalabilidad Futura (AWS)</h2>
+        <p>Gracias al diseño desacoplado de las interfaces, la arquitectura en un futuro escalará y sincronizará vía servicio telemétrico (<b>AWS IoT Core</b>). El sistema continuará trabajando de manera local mediante caché si se pierde la conexión, ya que la lógica interna evalúa la validación con la base de datos SQLite embebida de manera primaria.</p>
+    </div>
+</body>
+</html>

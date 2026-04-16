@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flujo de Acceso: Happy Path</title>
+    <!-- Tailwind CSS (CDN for quick styling) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0d1117; /* GitHub Dark theme background */
+            color: #c9d1d9;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .mermaid {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+        }
+        h1 {
+            background: -webkit-linear-gradient(45deg, #58a6ff, #3fb950);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-8">
+
+    <div class="max-w-4xl w-full">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Flujo de Acceso RFID (Happy Path)</h1>
+            <p class="text-gray-400 text-lg">
+                Visualización del "Trigger" y Secuencia de Eventos cuando un empleado autorizado escanea su tarjeta en el sistema.
+            </p>
+        </div>
+
+        <!-- Mermaid Diagram -->
+        <div class="mermaid">
+            %%{init: {'theme': 'dark', 'sequence': {'showSequenceNumbers': true, 'messageAlign': 'center'} }}%%
+            sequenceDiagram
+                actor Usuario as "Usuario"
+                participant Lector as "Lector RFID"
+                participant Loop as "Task Background<br/>(main.py)"
+                participant Workflow as "process_swipe(...)<br/>(domain)"
+                participant DB as "SQLite DB"
+                participant HW as "Hardware Controller<br/>(Relé, LED, Buzzer)"
+
+                Usuario->>Lector: 1. Pasa tarjeta RFID físicamente
+                Lector-->>Loop: 2. Card detectada, retorna `card_id`
+                
+                Note over Loop: Ejecuta dentro de rfid_polling_task
+                Loop->>Workflow: 3. Llama a lógica de negocio process_swipe(card_id...)
+                
+                Workflow->>DB: 4. Consulta si existe Usuario con ese `card_id`
+                DB-->>Workflow: 5. Retorna entidad de Usuario (Autorizado = True)
+                
+                Workflow->>DB: 6. Guarda Registro de Acceso (Log exitoso)
+                
+                Note over Workflow,HW: Acciones de Hardware (Apertura)
+                Workflow->>HW: 7. get_buzzer().beep() (Tono de éxito)
+                Workflow->>HW: 8. get_green_led().turn_on()
+                Workflow->>HW: 9. get_door_relay().turn_on() (Abre puerta)
+                
+                Note over HW: Espera configurada (ej. 5 segundos)
+                
+                Workflow->>HW: 10. get_door_relay().turn_off() (Cierra puerta)
+                Workflow->>HW: 11. get_green_led().turn_off()
+        </div>
+
+        <!-- Details -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-[#161b22] border border-[#30363d] p-6 rounded-lg text-center">
+                <div class="text-2xl mb-2">⚡</div>
+                <h3 class="text-lg font-semibold text-white mb-2">Trigger Asíncrono</h3>
+                <p class="text-sm text-gray-400">El evento es iniciado de manera autónoma por el polling loop de `asyncio` sin bloquear peticiones a la web.</p>
+            </div>
+            <div class="bg-[#161b22] border border-[#30363d] p-6 rounded-lg text-center">
+                <div class="text-2xl mb-2">🔐</div>
+                <h3 class="text-lg font-semibold text-white mb-2">Validación Segura</h3>
+                <p class="text-sm text-gray-400">El `domain workflow` abstrae y orquesta las lecturas y verificaciones contra la BD SQLite.</p>
+            </div>
+            <div class="bg-[#161b22] border border-[#30363d] p-6 rounded-lg text-center">
+                <div class="text-2xl mb-2">🚪</div>
+                <h3 class="text-lg font-semibold text-white mb-2">Acción de Hardware</h3>
+                <p class="text-sm text-gray-400">Las interfaces sólidas de hardware encienden múltiples componentes sin depender los unos de los otros (SOLID).</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mermaid CDN (Lazy init to ensure DOM is ready) -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>
