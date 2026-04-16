@@ -1,7 +1,8 @@
 import asyncio
 from fastapi import FastAPI
 from .infrastructure.database import init_db, SessionLocal
-from .api.endpoints import router
+from .api.endpoints import router as endpoints_router
+from .api.auth import router as auth_router
 from .infrastructure.hardware.gpio_impl import (
     get_green_led, get_red_led, get_buzzer, get_door_relay, get_rfid_reader
 )
@@ -12,7 +13,8 @@ init_db()
 
 app = FastAPI(title="RPi RFID Door Access API")
 
-app.include_router(router)
+app.include_router(auth_router)
+app.include_router(endpoints_router)
 
 # Hardware setup (Will fallback to mock or None if not on RPi as per gpio_impl logic)
 # This loop simulates the background reading of the RFID scanner
