@@ -1,12 +1,12 @@
 import asyncio
 from fastapi import FastAPI
-from .infrastructure.database import init_db, SessionLocal
-from .api.endpoints import router as endpoints_router
-from .api.auth import router as auth_router
-from .infrastructure.hardware.gpio_impl import (
+from app.infrastructure.database import init_db, SessionLocal
+from app.api.endpoints import router as endpoints_router
+from app.api.auth import router as auth_router
+from app.infrastructure.hardware.gpio_impl import (
     get_green_led, get_red_led, get_buzzer, get_door_relay, get_rfid_reader
 )
-from .domain.workflows import process_swipe
+from app.domain.workflows import process_swipe
 
 # Database Init
 init_db()

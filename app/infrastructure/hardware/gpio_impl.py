@@ -1,7 +1,7 @@
 import time
 from gpiozero import LED, Buzzer as GpioBuzzer, OutputDevice
-from .interfaces import LedIndicator, Buzzer, DoorRelay, RFIDReader
-from ...core.config import settings
+from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay, RFIDReader
+from app.core.config import settings
 
 class GpioLedIndicator(LedIndicator):
     def __init__(self, pin: int):

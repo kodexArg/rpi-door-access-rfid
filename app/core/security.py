@@ -6,7 +6,7 @@ from fastapi.security.utils import get_authorization_scheme_param
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 
-from .config import settings
+from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

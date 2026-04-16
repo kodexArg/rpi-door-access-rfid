@@ -1,4 +1,4 @@
-from .interfaces import LedIndicator, Buzzer, DoorRelay, RFIDReader
+from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay, RFIDReader
 
 class MockLedIndicator(LedIndicator):
     def __init__(self, color: str):

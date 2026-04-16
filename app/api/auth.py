@@ -5,8 +5,8 @@ from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 
-from ..core.config import settings
-from ..core.security import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from app.core.config import settings
+from app.core.security import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")

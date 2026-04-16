@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 from typing import List
 import datetime
 
-from ..infrastructure.database import get_db
-from ..infrastructure.models import AccountModel
-from ..domain.entities import Account
-from ..core.security import get_current_admin, get_current_admin_cookie
+from app.infrastructure.database import get_db
+from app.infrastructure.models import AccountModel
+from app.domain.entities import Account
+from app.core.security import get_current_admin, get_current_admin_cookie
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")

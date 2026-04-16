@@ -1,8 +1,8 @@
 import datetime
 from typing import Tuple, Dict, Any
 from sqlalchemy.orm import Session
-from ..infrastructure.models import AccountModel, AccessLogModel
-from ..infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay
+from app.infrastructure.models import AccountModel, AccessLogModel
+from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay
 
 def log_access(db: Session, account_id: str, event_type: str, reason: str = None) -> None:
     log_entry = AccessLogModel(
