@@ -1,7 +1,7 @@
 import datetime
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from app.core.templates import make_templates
 from sqlalchemy.orm import Session
 
 from app.infrastructure.database import get_db
@@ -9,7 +9,7 @@ from app.infrastructure.models import AuditLogModel
 from app.core.security import get_current_admin_cookie
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+templates = make_templates()
 
 PER_PAGE = 50
 

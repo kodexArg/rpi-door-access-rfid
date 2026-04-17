@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse, Response
-from fastapi.templating import Jinja2Templates
+from app.core.templates import make_templates
 from sqlalchemy.orm import Session, joinedload
 from typing import List
 import datetime
@@ -15,7 +15,7 @@ from app.core.audit import log_audit
 from app.api.stats import compute_kpi
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+templates = make_templates()
 
 # REST API
 

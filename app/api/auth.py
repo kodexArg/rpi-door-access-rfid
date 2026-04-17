@@ -2,14 +2,14 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Form, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse, HTMLResponse
-from fastapi.templating import Jinja2Templates
+from app.core.templates import make_templates
 from fastapi import Request
 
 from app.core.config import settings
 from app.core.security import create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+templates = make_templates()
 
 @router.post("/api/login")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):

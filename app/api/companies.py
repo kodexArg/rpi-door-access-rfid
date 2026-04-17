@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
+from app.core.templates import make_templates
 from sqlalchemy.orm import Session
 from typing import List
 
@@ -12,7 +12,7 @@ from app.core.time import utcnow
 from app.core.audit import log_audit
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
+templates = make_templates()
 
 
 def _active_companies(db: Session):
