@@ -40,4 +40,6 @@ ENV/
 
 # Tailwind standalone binary (downloaded by scripts/build-css.sh)
 scripts/bin/
-app/static/dist/
+# Compiled CSS is committed so deployments work without the Tailwind binary
+!app/static/dist/
+!app/static/dist/app.css
