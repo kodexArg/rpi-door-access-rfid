@@ -1,24 +1,24 @@
 <tr id="account-{{ acc.account_id }}"
-    class="border-t border-slate-800 hover:bg-slate-900/60 transition-colors">
-    <td class="px-4 py-3 font-mono text-sm text-slate-200">{{ acc.account_id }}</td>
+    class="border-t border-sky-100 hover:bg-sky-50 transition-colors">
+    <td class="px-4 py-3 font-mono text-sm text-slate-700">{{ acc.account_id }}</td>
     <td class="px-4 py-3">
         {% if acc.status == 'active' %}
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5
-                     text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20">
-            <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5
+                     text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
             Active
         </span>
         {% else %}
-        <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-2.5 py-0.5
-                     text-xs font-medium text-rose-400 ring-1 ring-inset ring-rose-500/20">
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-2.5 py-0.5
+                     text-xs font-semibold text-rose-600 ring-1 ring-inset ring-rose-200">
             <span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
             Inactive
         </span>
         {% endif %}
     </td>
-    <td class="px-4 py-3 text-sm text-slate-400">{{ acc.expiration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+    <td class="px-4 py-3 text-sm text-slate-500">{{ acc.expiration_date.strftime('%Y-%m-%d %H:%M') }}</td>
     <td class="px-4 py-3">
-        <span class="font-mono text-sm font-semibold text-slate-100">{{ acc.credits }}</span>
+        <span class="font-mono text-sm font-bold text-slate-800">{{ acc.credits }}</span>
     </td>
     <td class="px-4 py-3 text-right">
         <button type="button"
@@ -26,10 +26,10 @@
                 hx-vals='{"amount": "5"}'
                 hx-target="#account-{{ acc.account_id }}"
                 hx-swap="outerHTML"
-                class="inline-flex items-center gap-1 rounded-md bg-emerald-600/20 hover:bg-emerald-600/30
-                       px-3 py-1.5 text-xs font-medium text-emerald-300 ring-1 ring-inset ring-emerald-500/30
+                class="inline-flex items-center gap-1 rounded-xl bg-emerald-100 hover:bg-emerald-200
+                       px-3 py-1.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-200
                        transition-colors">
-            +5 credits
+            +5 créditos
         </button>
     </td>
 </tr>

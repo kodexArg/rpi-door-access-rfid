@@ -1,21 +1,22 @@
 {#- Reusable KPI cards: rendered on initial page load and pushed via SSE after every swipe. -#}
 {%- macro card(label, total, grant, deny, rate) -%}
-<div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+<div class="bg-white border border-sky-100 rounded-2xl p-5 space-y-3 shadow-sm">
     <div class="flex items-baseline justify-between">
-        <p class="text-xs font-medium uppercase tracking-widest text-slate-500">{{ label }}</p>
-        <p class="text-xs font-mono tabular-nums
-            {% if rate >= 90 %}text-emerald-400{% elif rate >= 70 %}text-amber-400{% else %}text-rose-400{% endif %}">
+        <p class="text-xs font-semibold uppercase tracking-widest text-sky-500">{{ label }}</p>
+        <p class="text-xs font-mono tabular-nums font-semibold
+            {% if rate >= 90 %}text-emerald-600{% elif rate >= 70 %}text-amber-500{% else %}text-rose-500{% endif %}">
             {{ '%.1f' % rate }}%
         </p>
     </div>
-    <p class="text-4xl font-bold tabular-nums text-slate-100">{{ total }}</p>
+    <p class="text-4xl font-bold tabular-nums text-slate-800">{{ total }}</p>
     <div class="flex gap-4 text-xs font-mono">
-        <span class="text-emerald-400">✓ {{ grant }}</span>
-        <span class="text-rose-400">✕ {{ deny }}</span>
+        <span class="text-emerald-600 font-semibold">✓ {{ grant }}</span>
+        <span class="text-rose-500 font-semibold">✕ {{ deny }}</span>
     </div>
-    {# Inline success bar #}
-    <div class="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-        <div class="h-full bg-emerald-500 transition-all" style="width: {{ rate }}%"></div>
+    <div class="h-1.5 w-full bg-sky-100 rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all
+            {% if rate >= 90 %}bg-emerald-400{% elif rate >= 70 %}bg-amber-400{% else %}bg-rose-400{% endif %}"
+             style="width: {{ rate }}%"></div>
     </div>
 </div>
 {%- endmacro -%}
@@ -27,26 +28,25 @@
     {{ card('Este mes', kpi.this_month_total, kpi.this_month_grant, kpi.this_month_deny, kpi.this_month_success_rate) }}
 </div>
 
-{# Deny breakdown — only visible when there's been at least one deny today #}
 {% if kpi.today_deny > 0 %}
-<div class="mt-4 bg-slate-900 border border-slate-800 rounded-xl p-4">
-    <p class="text-xs font-medium uppercase tracking-widest text-slate-500 mb-3">Fallos de hoy — desglose</p>
+<div class="mt-4 bg-white border border-sky-100 rounded-2xl p-4 shadow-sm">
+    <p class="text-xs font-semibold uppercase tracking-widest text-sky-500 mb-3">Fallos de hoy — desglose</p>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-        <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
-            <span class="text-slate-400">No encontrada</span>
-            <span class="font-mono tabular-nums text-rose-400">{{ kpi.today_deny_not_found }}</span>
+        <div class="flex items-center justify-between bg-rose-50 border border-rose-100 rounded-xl px-3 py-2">
+            <span class="text-slate-600 text-xs">No encontrada</span>
+            <span class="font-mono tabular-nums text-rose-500 font-semibold">{{ kpi.today_deny_not_found }}</span>
         </div>
-        <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
-            <span class="text-slate-400">Vencida</span>
-            <span class="font-mono tabular-nums text-amber-400">{{ kpi.today_deny_expired }}</span>
+        <div class="flex items-center justify-between bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+            <span class="text-slate-600 text-xs">Vencida</span>
+            <span class="font-mono tabular-nums text-amber-600 font-semibold">{{ kpi.today_deny_expired }}</span>
         </div>
-        <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
-            <span class="text-slate-400">Sin créditos</span>
-            <span class="font-mono tabular-nums text-amber-400">{{ kpi.today_deny_no_credits }}</span>
+        <div class="flex items-center justify-between bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+            <span class="text-slate-600 text-xs">Sin créditos</span>
+            <span class="font-mono tabular-nums text-amber-600 font-semibold">{{ kpi.today_deny_no_credits }}</span>
         </div>
-        <div class="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
-            <span class="text-slate-400">Inactiva</span>
-            <span class="font-mono tabular-nums text-rose-400">{{ kpi.today_deny_invalid }}</span>
+        <div class="flex items-center justify-between bg-rose-50 border border-rose-100 rounded-xl px-3 py-2">
+            <span class="text-slate-600 text-xs">Inactiva</span>
+            <span class="font-mono tabular-nums text-rose-500 font-semibold">{{ kpi.today_deny_invalid }}</span>
         </div>
     </div>
 </div>

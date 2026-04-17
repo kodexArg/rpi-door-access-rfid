@@ -179,24 +179,27 @@ def ui_recharge_account(
 ):
     if not admin:
         return RedirectResponse(url="/login", status_code=303)
+    if amount <= 0 or amount > 10000:
+        raise HTTPException(status_code=400, detail="amount must be between 1 and 10000")
     account = db.query(AccountModel).filter(AccountModel.account_id == account_id).first()
-    if account:
-        prev_credits = account.credits
-        account.credits += amount
-        db.commit()
-        db.refresh(account)
-        log_audit(db, "card.recharged", "admin",
-                  f"Créditos recargados: tarjeta {account_id} (+{amount}, total {account.credits})",
-                  {"account_id": account_id, "amount": amount,
-                   "credits_before": prev_credits, "credits_after": account.credits})
-        broadcaster.publish("account_recharged", {
-            "account_id": account.account_id,
-            "credits": account.credits,
-            "delta": amount,
-            "timestamp": utcnow().isoformat(),
-        })
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    prev_credits = account.credits
+    account.credits += amount
+    db.commit()
+    db.refresh(account)
+    log_audit(db, "card.recharged", "admin",
+              f"Créditos recargados: tarjeta {account_id} (+{amount}, total {account.credits})",
+              {"account_id": account_id, "amount": amount,
+               "credits_before": prev_credits, "credits_after": account.credits})
+    broadcaster.publish("account_recharged", {
+        "account_id": account.account_id,
+        "credits": account.credits,
+        "delta": amount,
+        "timestamp": utcnow().isoformat(),
+    })
 
-    if request.headers.get("HX-Request") and account:
+    if request.headers.get("HX-Request"):
         # If called from user detail panel, return updated panel
         if account.user_id:
             user, accounts = _user_with_accounts(db, account.user_id)

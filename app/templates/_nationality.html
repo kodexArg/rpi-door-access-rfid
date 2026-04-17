@@ -1,0 +1,24 @@
+{#- Reusable nationality helpers: emoji flag + human name. -#}
+{%- set _FLAGS = {
+    "AR": "🇦🇷", "CL": "🇨🇱", "BR": "🇧🇷", "PY": "🇵🇾",
+    "UY": "🇺🇾", "BO": "🇧🇴", "PE": "🇵🇪", "OT": "🏳️"
+} -%}
+{%- set _NAMES = {
+    "AR": "Argentina", "CL": "Chile", "BR": "Brasil", "PY": "Paraguay",
+    "UY": "Uruguay", "BO": "Bolivia", "PE": "Perú", "OT": "Otros"
+} -%}
+
+{% macro flag(code) -%}
+<span title="{{ _NAMES.get(code or 'AR', 'Otros') }}">{{ _FLAGS.get(code or "AR", _FLAGS["OT"]) }}</span>
+{%- endmacro %}
+
+{% macro name(code) -%}
+{{ _NAMES.get(code or "AR", "Otros") }}
+{%- endmacro %}
+
+{% macro options(selected) -%}
+{%- set _selected = (selected or "AR") -%}
+{%- for code, label in [("AR","Argentina"),("CL","Chile"),("BR","Brasil"),("PY","Paraguay"),("UY","Uruguay"),("BO","Bolivia"),("PE","Perú"),("OT","Otros")] %}
+<option value="{{ code }}" {% if _selected == code %}selected{% endif %}>{{ _FLAGS[code] }} {{ label }}</option>
+{%- endfor %}
+{%- endmacro %}

@@ -1,0 +1,15 @@
+{% macro render(status) -%}
+{% if status == 'active' %}
+<span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold
+             bg-emerald-100 text-emerald-700 ring-1 ring-inset ring-emerald-200">
+    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+    {{ status }}
+</span>
+{% else %}
+<span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold
+             bg-rose-100 text-rose-600 ring-1 ring-inset ring-rose-200">
+    <span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
+    {{ status }}
+</span>
+{% endif %}
+{%- endmacro %}

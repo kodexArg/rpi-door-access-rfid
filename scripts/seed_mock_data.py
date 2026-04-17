@@ -80,15 +80,23 @@ def create_company(db, name: str) -> CompanyModel:
     return company
 
 
-def create_user(db, first: str, last: str, email: str, company: CompanyModel) -> UserModel:
-    user = UserModel(first_name=first, last_name=last, email=email or None, company_id=company.id)
+def create_user(db, first: str, last: str, email: str, company: CompanyModel,
+                document_type: str = "DNI", document_number: str | None = None,
+                nationality: str = "AR") -> UserModel:
+    user = UserModel(
+        first_name=first, last_name=last, email=email or None, company_id=company.id,
+        document_type=document_type, document_number=document_number,
+        nationality=nationality,
+    )
     db.add(user)
     db.commit()
     db.refresh(user)
     log_audit(db, "user.created", "admin",
               f"Usuario creado — {first} {last}",
-              {"user_id": user.id, "name": f"{first} {last}", "company": company.name})
-    step(f"Usuario creado: {first} {last} → {company.name}")
+              {"user_id": user.id, "name": f"{first} {last}", "company": company.name,
+               "document_type": document_type, "document_number": document_number,
+               "nationality": nationality})
+    step(f"Usuario creado: {first} {last} [{nationality} {document_type} {document_number or '—'}] → {company.name}")
     return user
 
 
@@ -183,16 +191,26 @@ def main(reset: bool) -> None:
 
         # ---------------- FASE 2: usuarios ----------------
         banner("FASE 2 — Alta de usuarios")
-        homer = create_user(db, "Homer", "Simpson", "homer@snpp.com", planta)
-        marge = create_user(db, "Marge", "Simpson", "marge@simpson.com", familia)
-        bart = create_user(db, "Bart", "Simpson", "elbarto@gmail.com", familia)
-        lisa = create_user(db, "Lisa", "Simpson", "lisa@saxo.org", familia)
-        maggie = create_user(db, "Maggie", "Simpson", "", familia)  # bebé, sin tarjeta
-        ned = create_user(db, "Ned", "Flanders", "ned@okilydokily.com", particulares)
-        moe = create_user(db, "Moe", "Szyslak", "moe@tavern.com", moe_bar)
-        barney = create_user(db, "Barney", "Gumble", "barney@tavern.com", moe_bar)
-        apu = create_user(db, "Apu", "Nahasapeemapetilon", "apu@kwikemart.com", particulares)
-        krusty = create_user(db, "Krusty", "ElPayaso", "krusty@kbbl.tv", particulares)
+        homer = create_user(db, "Homer", "Simpson", "homer@snpp.com", planta,
+                            document_number="20123456", nationality="AR")
+        marge = create_user(db, "Marge", "Simpson", "marge@simpson.com", familia,
+                            document_number="21234567", nationality="AR")
+        bart = create_user(db, "Bart", "Simpson", "elbarto@gmail.com", familia,
+                           document_number="45678901", nationality="AR")
+        lisa = create_user(db, "Lisa", "Simpson", "lisa@saxo.org", familia,
+                           document_number="46789012", nationality="AR")
+        maggie = create_user(db, "Maggie", "Simpson", "", familia,
+                             document_number="55123456", nationality="AR")
+        ned = create_user(db, "Ned", "Flanders", "ned@okilydokily.com", particulares,
+                          document_type="Pasaporte", document_number="CHL7788991", nationality="CL")
+        moe = create_user(db, "Moe", "Szyslak", "moe@tavern.com", moe_bar,
+                          document_type="Pasaporte", document_number="BR998877A", nationality="BR")
+        barney = create_user(db, "Barney", "Gumble", "barney@tavern.com", moe_bar,
+                             document_type="CI", document_number="4567890", nationality="UY")
+        apu = create_user(db, "Apu", "Nahasapeemapetilon", "apu@kwikemart.com", particulares,
+                          document_type="Pasaporte", document_number="IN1234567", nationality="OT")
+        krusty = create_user(db, "Krusty", "ElPayaso", "krusty@kbbl.tv", particulares,
+                             document_type="Pasaporte", document_number="PY5566778", nationality="PY")
         pause()
 
         # ---------------- FASE 3: tarjetas ----------------

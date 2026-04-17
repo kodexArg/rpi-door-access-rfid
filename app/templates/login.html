@@ -1,25 +1,29 @@
 {% extends "_layout.html" %}
-{% block title %}RPi Door Access — Login{% endblock %}
+{% block title %}Parador Km1151 — Acceso{% endblock %}
 
 {% block body %}
-<main class="min-h-screen flex items-center justify-center px-4">
+<main class="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-sky-100 to-blue-50">
     <div class="w-full max-w-sm">
-        <h2 class="text-2xl font-semibold text-center mb-6 tracking-tight">Admin Login</h2>
+        <div class="text-center mb-8">
+            <h1 class="font-nunito text-3xl font-800 text-sky-700 tracking-tight" style="font-weight:800">PARADOR KM1151</h1>
+            <p class="text-sky-500 text-sm font-medium mt-1 tracking-wide">DUCHAS</p>
+        </div>
 
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl">
+        <div class="bg-white border border-sky-100 rounded-2xl p-7 shadow-md">
+            <h2 class="text-lg font-bold text-slate-800 mb-5">Acceso al panel</h2>
             <form action="/ui/login" method="POST" class="space-y-4">
                 <div>
-                    <label for="password" class="block text-sm font-medium text-slate-300 mb-1">Password</label>
+                    <label for="password" class="block text-sm font-medium text-slate-600 mb-1.5">Contraseña</label>
                     <input id="password" type="password" name="password" required autofocus
-                           class="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2
-                                  text-slate-100 placeholder-slate-500
-                                  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                           class="w-full rounded-xl bg-sky-50 border border-sky-200 px-3 py-2.5
+                                  text-slate-800 placeholder-slate-400
+                                  focus:outline-none focus:ring-2 focus:ring-sky-400 focus:border-transparent">
                 </div>
                 <button type="submit"
-                        class="w-full rounded-md bg-indigo-600 hover:bg-indigo-500
-                               px-4 py-2 text-sm font-medium text-white
-                               transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                    Login
+                        class="w-full rounded-xl bg-sky-500 hover:bg-sky-600
+                               px-4 py-2.5 text-sm font-semibold text-white
+                               transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400">
+                    Ingresar
                 </button>
             </form>
         </div>

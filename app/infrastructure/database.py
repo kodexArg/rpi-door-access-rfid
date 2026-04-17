@@ -21,6 +21,9 @@ def _run_migrations():
     """Idempotent ALTER TABLE migrations — safe to run on every startup."""
     migrations = [
         "ALTER TABLE users ADD COLUMN deleted_at DATETIME",
+        "ALTER TABLE users ADD COLUMN document_type VARCHAR",
+        "ALTER TABLE users ADD COLUMN document_number VARCHAR",
+        "ALTER TABLE users ADD COLUMN nationality VARCHAR DEFAULT 'AR'",
         "ALTER TABLE companies ADD COLUMN deleted_at DATETIME",
         "CREATE INDEX IF NOT EXISTS ix_access_logs_timestamp ON access_logs (timestamp)",
         "CREATE INDEX IF NOT EXISTS ix_access_logs_account_id ON access_logs (account_id)",

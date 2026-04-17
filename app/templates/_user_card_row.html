@@ -1,0 +1,86 @@
+{% import "_status_badge.html" as badge %}
+{# Card row for a user's accounts table. Read-only until "Editar" is pressed. #}
+<tr class="hover:bg-slate-700/20 transition-colors align-middle" x-data="{ editMode: false }">
+
+    {# --- Read mode cells (Alpine toggles with x-show) --- #}
+    <td class="px-4 py-3 font-mono text-xs text-slate-300" x-show="!editMode">{{ acc.account_id }}</td>
+    <td class="px-4 py-3" x-show="!editMode">{{ badge.render(acc.status) }}</td>
+    <td class="px-4 py-3 font-mono text-sm font-bold text-slate-200" x-show="!editMode">{{ acc.credits }}</td>
+    <td class="px-4 py-3 text-xs text-slate-400 font-mono" x-show="!editMode">{{ acc.expiration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+    <td class="px-4 py-3" x-show="!editMode">
+        <div class="flex items-center justify-end gap-2">
+            <button type="button"
+                    @click="editMode = true"
+                    class="text-xs text-slate-300 hover:text-white bg-slate-700/60 hover:bg-slate-600 px-3 py-1 rounded transition-colors">
+                Editar
+            </button>
+            <button type="button"
+                    hx-delete="/ui/accounts/{{ acc.account_id }}"
+                    hx-target="#user-detail-panel"
+                    hx-swap="innerHTML"
+                    hx-confirm="¿Desvincular esta tarjeta del usuario?"
+                    class="text-xs text-rose-500 hover:text-rose-400 px-2 py-1 rounded hover:bg-slate-700 transition-colors">
+                ✕
+            </button>
+        </div>
+    </td>
+
+    {# --- Edit mode: full inline form spans all 5 columns --- #}
+    <td colspan="5" class="px-4 py-3 bg-slate-900/40" x-show="editMode" x-cloak>
+        <form hx-post="/ui/accounts/{{ acc.account_id }}/edit"
+              hx-target="#user-detail-panel"
+              hx-swap="innerHTML"
+              @submit="editMode = false"
+              class="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
+
+            <div class="font-mono text-xs text-slate-400 truncate" title="{{ acc.account_id }}">{{ acc.account_id }}</div>
+
+            <select name="status"
+                    class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <option value="active" {{ 'selected' if acc.status == 'active' }}>active</option>
+                <option value="inactive" {{ 'selected' if acc.status == 'inactive' }}>inactive</option>
+            </select>
+
+            <label class="text-xs text-slate-500 flex items-center gap-1">
+                Créditos
+                <input type="number" name="credits" value="{{ acc.credits }}" min="0"
+                       class="w-20 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </label>
+
+            <label class="text-xs text-slate-500 flex items-center gap-1">
+                Vence
+                <input type="datetime-local" name="expiration_date"
+                       value="{{ acc.expiration_date.strftime('%Y-%m-%dT%H:%M') }}"
+                       class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+            </label>
+
+            <div class="flex items-center gap-1 justify-end">
+                <button type="submit"
+                        class="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs font-medium transition-colors">
+                    Guardar
+                </button>
+                <button type="button"
+                        @click="editMode = false"
+                        class="px-2 py-1 text-slate-400 hover:text-slate-200 rounded text-xs transition-colors">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+
+        {# Recharge: separate action to preserve card.recharged audit event #}
+        <div class="mt-2 flex items-center justify-end gap-2 text-xs text-slate-500">
+            Recargar créditos:
+            <form hx-post="/ui/accounts/{{ acc.account_id }}/recharge"
+                  hx-target="#user-detail-panel"
+                  hx-swap="innerHTML"
+                  class="flex gap-1 items-center">
+                <input type="number" name="amount" value="5" min="1"
+                       class="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <button type="submit"
+                        class="px-2 py-1 bg-emerald-600/30 hover:bg-emerald-600/50 text-emerald-200 rounded text-xs font-medium transition-colors">
+                    +
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>

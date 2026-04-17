@@ -1,15 +1,16 @@
-<!-- Tab 3: Administración — Usuarios, Empresas y operaciones de mantenimiento -->
+{% import "_nationality.html" as nat %}
+<!-- Tab 3: Administración -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     <!-- Section A: Usuarios -->
-    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-800">
-            <h3 class="text-sm font-semibold text-slate-200">Usuarios</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Gestión de clientes del sistema</p>
+    <div class="bg-white border border-sky-100 rounded-2xl overflow-hidden shadow-sm">
+        <div class="px-5 py-4 border-b border-sky-100 bg-sky-50/50">
+            <h3 class="text-sm font-bold text-slate-800">Usuarios</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Gestión de clientes del sistema</p>
         </div>
 
         <!-- Create user form -->
-        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/50">
+        <div class="px-5 py-4 border-b border-sky-100">
             <form hx-post="/ui/users/create"
                   hx-target="#user-list-body"
                   hx-swap="afterbegin"
@@ -17,22 +18,37 @@
                   class="space-y-3">
                 <div class="grid grid-cols-2 gap-2">
                     <input type="text" name="first_name" required placeholder="Nombre"
-                           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                           class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
                     <input type="text" name="last_name" required placeholder="Apellido"
-                           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                           class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
                 </div>
                 <input type="email" name="email" placeholder="Email (opcional)"
-                       class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                       class="w-full bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                <div class="grid grid-cols-[7rem_1fr] gap-2">
+                    <select name="document_type"
+                            class="bg-sky-50 border border-sky-200 rounded-xl px-2 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                        <option value="DNI">DNI</option>
+                        <option value="Pasaporte">Pasaporte</option>
+                        <option value="CI">CI</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                    <input type="text" name="document_number" placeholder="Nro. de documento"
+                           class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                </div>
+                <select name="nationality"
+                        class="w-full bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
+                    {{ nat.options("AR") }}
+                </select>
                 <div class="flex gap-2">
                     <select name="company_id" required
-                            class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="flex-1 bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
                         <option value="" disabled selected>Empresa...</option>
                         {% for c in companies %}
                         <option value="{{ c.id }}">{{ c.name }}</option>
                         {% endfor %}
                     </select>
                     <button type="submit"
-                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
+                            class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-xl transition-colors whitespace-nowrap">
                         + Crear
                     </button>
                 </div>
@@ -40,36 +56,36 @@
         </div>
 
         <!-- User list -->
-        <div id="user-list-body" class="divide-y divide-slate-800 max-h-96 overflow-y-auto">
+        <div id="user-list-body" class="divide-y divide-sky-50 max-h-96 overflow-y-auto">
             {% include "_user_list_editable.html" %}
         </div>
     </div>
 
     <!-- Section B: Empresas -->
-    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-        <div class="px-5 py-4 border-b border-slate-800">
-            <h3 class="text-sm font-semibold text-slate-200">Empresas</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Grupos de clientes</p>
+    <div class="bg-white border border-sky-100 rounded-2xl overflow-hidden shadow-sm">
+        <div class="px-5 py-4 border-b border-sky-100 bg-sky-50/50">
+            <h3 class="text-sm font-bold text-slate-800">Empresas</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Grupos de clientes</p>
         </div>
 
         <!-- Create company form -->
-        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/50">
+        <div class="px-5 py-4 border-b border-sky-100">
             <form hx-post="/ui/companies/create"
                   hx-target="#company-list-body"
                   hx-swap="innerHTML"
                   hx-on::after-request="if(event.detail.successful) this.reset()"
                   class="flex gap-2">
                 <input type="text" name="name" required placeholder="Nombre de la empresa"
-                       class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                       class="flex-1 bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
                 <button type="submit"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
+                        class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-xl transition-colors whitespace-nowrap">
                     + Crear
                 </button>
             </form>
         </div>
 
         <!-- Company list -->
-        <div id="company-list-body" class="divide-y divide-slate-800 max-h-96 overflow-y-auto">
+        <div id="company-list-body" class="divide-y divide-sky-50 max-h-96 overflow-y-auto">
             {% include "_company_list_editable.html" %}
         </div>
     </div>
@@ -77,16 +93,16 @@
 </div>
 
 <!-- Recuperar tarjetas abandonadas -->
-<div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl p-5"
+<div class="mt-6 bg-white border border-sky-100 rounded-2xl p-5 shadow-sm"
      x-data="{ scanning: false, scannedCards: [], scanInput: '' }">
 
     <div class="flex items-center justify-between">
         <div>
-            <h3 class="text-sm font-medium text-slate-300">Recuperar tarjetas abandonadas</h3>
-            <p class="text-xs text-slate-500 mt-0.5">Escaneá fichas encontradas en el recipiente y luego blanqueá para desvincularlas de todos los usuarios.</p>
+            <h3 class="text-sm font-bold text-slate-800">Recuperar tarjetas abandonadas</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Escaneá fichas encontradas en el recipiente y luego blanqueá para desvincularlas de todos los usuarios.</p>
         </div>
         <button @click="scanning = !scanning"
-                class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors">
+                class="text-xs px-3 py-1.5 rounded-xl border border-sky-200 text-sky-600 hover:bg-sky-50 hover:border-sky-300 transition-colors font-medium">
             <span x-text="scanning ? 'Cerrar' : 'Abrir'"></span>
         </button>
     </div>
@@ -101,24 +117,24 @@
                    "
                    placeholder="Pasar tarjeta por lector USB o escribir UID..."
                    autocomplete="off"
-                   class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                   class="flex-1 bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm font-mono text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
             <button @click="
                        const uid = scanInput.trim();
                        if (uid && !scannedCards.includes(uid)) scannedCards.push(uid);
                        scanInput = '';
                    "
-                    class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition-colors">
+                    class="px-3 py-2 bg-sky-100 hover:bg-sky-200 text-sky-700 rounded-xl text-sm font-semibold transition-colors">
                 Agregar
             </button>
         </div>
 
-        <div x-show="scannedCards.length > 0" class="bg-slate-800 rounded-lg p-3 space-y-1">
-            <p class="text-xs text-slate-500 mb-2">Tarjetas a blanquear:</p>
+        <div x-show="scannedCards.length > 0" class="bg-sky-50 border border-sky-100 rounded-xl p-3 space-y-1">
+            <p class="text-xs text-slate-400 mb-2 font-medium">Tarjetas a blanquear:</p>
             <template x-for="uid in scannedCards" :key="uid">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-mono text-slate-300" x-text="uid"></span>
+                    <span class="text-xs font-mono text-slate-700" x-text="uid"></span>
                     <button @click="scannedCards = scannedCards.filter(c => c !== uid)"
-                            class="text-slate-600 hover:text-rose-400 text-xs ml-2">✕</button>
+                            class="text-slate-300 hover:text-rose-500 text-xs ml-2 transition-colors">✕</button>
                 </div>
             </template>
         </div>
@@ -130,14 +146,14 @@
                 <input type="hidden" name="account_ids" :value="scannedCards.join(',')">
                 <button type="submit"
                         :disabled="scannedCards.length === 0"
-                        class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                        class="px-4 py-2 bg-rose-500 hover:bg-rose-600 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl transition-colors"
                         @click="if (scannedCards.length === 0) $event.preventDefault()">
                     Blanquear (<span x-text="scannedCards.length"></span>)
                 </button>
             </form>
             <button @click="scannedCards = []; scanInput = '';"
                     x-show="scannedCards.length > 0"
-                    class="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                    class="text-xs text-slate-400 hover:text-slate-600 transition-colors">
                 Limpiar lista
             </button>
         </div>

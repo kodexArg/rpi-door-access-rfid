@@ -108,6 +108,9 @@ def ui_create_user(
     last_name: str = Form(...),
     email: str = Form(""),
     company_id: int = Form(...),
+    document_type: str = Form(""),
+    document_number: str = Form(""),
+    nationality: str = Form("AR"),
     db: Session = Depends(get_db),
     admin: str = Depends(get_current_admin_cookie),
 ):
@@ -118,6 +121,9 @@ def ui_create_user(
         last_name=last_name.strip(),
         email=email.strip() or None,
         company_id=company_id,
+        document_type=document_type.strip() or None,
+        document_number=document_number.strip() or None,
+        nationality=(nationality or "AR").strip().upper(),
     )
     db.add(user)
     db.commit()
@@ -127,7 +133,9 @@ def ui_create_user(
               f"Usuario creado: {user.first_name} {user.last_name}",
               {"user_id": user.id, "first_name": user.first_name, "last_name": user.last_name,
                "email": user.email, "company_id": user.company_id,
-               "company_name": user.company.name if user.company else None})
+               "company_name": user.company.name if user.company else None,
+               "document_type": user.document_type, "document_number": user.document_number,
+               "nationality": user.nationality})
     if request.headers.get("HX-Request"):
         return templates.TemplateResponse(request, "_user_row_editable.html", {"u": user})
     return RedirectResponse(url="/", status_code=303)

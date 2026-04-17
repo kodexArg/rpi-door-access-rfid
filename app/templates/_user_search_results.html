@@ -1,15 +1,22 @@
+{% import "_nationality.html" as nat %}
 {% if users %}
     {% for u in users %}
-    <div class="px-4 py-3 cursor-pointer select-none hover:bg-slate-800/60 transition-colors"
+    <div class="px-4 py-3 cursor-pointer select-none hover:bg-sky-50 transition-colors"
          hx-get="/ui/users/{{ u.id }}/detail"
          hx-target="#user-detail-panel"
          hx-swap="innerHTML"
          @click="selectedUserId = {{ u.id }}"
-         :class="selectedUserId === {{ u.id }} ? 'bg-indigo-600/10 border-l-2 border-indigo-500 pl-3' : 'border-l-2 border-transparent'">
-        <p class="text-sm font-medium text-slate-100">{{ u.first_name }} {{ u.last_name }}</p>
-        <p class="text-xs text-slate-500">{{ u.company.name if u.company else '—' }}</p>
+         :class="selectedUserId === {{ u.id }} ? 'bg-sky-50 border-l-4 border-sky-500 pl-3' : 'border-l-4 border-transparent'">
+        <p class="text-sm font-semibold text-slate-800">
+            <span class="mr-1">{{ nat.flag(u.nationality) }}</span>
+            {{ u.first_name }} {{ u.last_name }}
+        </p>
+        <p class="text-xs text-slate-400 mt-0.5">
+            {{ u.company.name if u.company else '—' }}
+            {% if u.document_number %} · {{ u.document_type or 'Doc' }} {{ u.document_number }}{% endif %}
+        </p>
     </div>
     {% endfor %}
 {% else %}
-    <div class="px-4 py-8 text-center text-sm text-slate-600">Sin resultados</div>
+    <div class="px-4 py-8 text-center text-sm text-slate-400">Sin resultados</div>
 {% endif %}

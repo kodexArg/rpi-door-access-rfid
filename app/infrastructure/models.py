@@ -23,6 +23,9 @@ class UserModel(Base):
     last_name: Mapped[str] = mapped_column(String)
     email: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    document_type: Mapped[Optional[str]] = mapped_column(String, nullable=True, default=None)
+    document_number: Mapped[Optional[str]] = mapped_column(String, nullable=True, default=None)
+    nationality: Mapped[str] = mapped_column(String, default="AR")
     deleted_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime, nullable=True, default=None)
 
     company = relationship("CompanyModel")

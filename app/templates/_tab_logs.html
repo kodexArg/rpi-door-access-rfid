@@ -2,7 +2,7 @@
 <div class="space-y-4">
 
     <!-- Filter bar -->
-    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+    <div class="bg-white border border-sky-100 rounded-2xl p-4 shadow-sm">
         <form hx-get="/ui/logs"
               hx-target="#logs-container"
               hx-swap="innerHTML"
@@ -11,9 +11,9 @@
             <input type="hidden" name="page" value="1">
 
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-slate-500">Tipo de evento</label>
+                <label class="text-xs text-slate-500 font-medium">Tipo de evento</label>
                 <select name="event_type"
-                        class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
                     <option value="all" {{ 'selected' if filters.event_type == 'all' }}>Todos</option>
                     <optgroup label="Hardware">
                         <option value="rfid.grant"  {{ 'selected' if filters.event_type == 'rfid.grant'  }}>Acceso concedido</option>
@@ -38,9 +38,9 @@
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-slate-500">Actor</label>
+                <label class="text-xs text-slate-500 font-medium">Actor</label>
                 <select name="actor"
-                        class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
                     <option value="all"    {{ 'selected' if filters.actor == 'all'    }}>Todos</option>
                     <option value="admin"  {{ 'selected' if filters.actor == 'admin'  }}>Admin</option>
                     <option value="system" {{ 'selected' if filters.actor == 'system' }}>Sistema (RFID)</option>
@@ -48,26 +48,26 @@
             </div>
 
             <div class="flex flex-col gap-1 min-w-48">
-                <label class="text-xs text-slate-500">Buscar en descripción</label>
+                <label class="text-xs text-slate-500 font-medium">Buscar en descripción</label>
                 <input type="text" name="text" value="{{ filters.text }}"
                        placeholder="Nombre, tarjeta, empresa..."
-                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                       class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400">
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-slate-500">Desde</label>
+                <label class="text-xs text-slate-500 font-medium">Desde</label>
                 <input type="date" name="date_from" value="{{ filters.date_from }}"
-                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                       class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
             </div>
 
             <div class="flex flex-col gap-1">
-                <label class="text-xs text-slate-500">Hasta</label>
+                <label class="text-xs text-slate-500 font-medium">Hasta</label>
                 <input type="date" name="date_to" value="{{ filters.date_to }}"
-                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                       class="bg-sky-50 border border-sky-200 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400">
             </div>
 
             <button type="submit"
-                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">
+                    class="px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-xl transition-colors">
                 Filtrar
             </button>
 
@@ -75,7 +75,7 @@
                     hx-get="/ui/logs"
                     hx-target="#logs-container"
                     hx-swap="innerHTML"
-                    class="px-3 py-2 text-slate-500 hover:text-slate-300 text-sm transition-colors">
+                    class="px-3 py-2 text-slate-400 hover:text-slate-600 text-sm transition-colors">
                 Limpiar
             </button>
         </form>

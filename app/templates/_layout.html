@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}RPi Door Access{% endblock %}</title>
+    <title>{% block title %}Parador Km1151{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', path='/dist/app.css') }}">
     <script src="{{ url_for('static', path='/vendor/htmx.min.js') }}"></script>
     <script src="{{ url_for('static', path='/vendor/htmx-ext-sse.js') }}"></script>
     <script defer src="{{ url_for('static', path='/vendor/alpinejs.min.js') }}"></script>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 antialiased"
+<body class="min-h-screen bg-sky-50 text-slate-800 antialiased"
       x-data="{ toasts: [],
                 pushToast(msg, kind) {
                     const id = Date.now() + Math.random();
@@ -29,11 +32,11 @@
 
 <div class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none">
     <template x-for="t in toasts" :key="t.id">
-        <div class="pointer-events-auto rounded-lg px-4 py-3 shadow-lg text-sm font-medium"
+        <div class="pointer-events-auto rounded-xl px-4 py-3 shadow-lg text-sm font-medium"
              :class="{
-                 'bg-emerald-600 text-white': t.kind === 'success',
-                 'bg-rose-600 text-white':    t.kind === 'error',
-                 'bg-slate-800 text-slate-100 border border-slate-700': t.kind === 'info'
+                 'bg-emerald-500 text-white': t.kind === 'success',
+                 'bg-rose-500 text-white':    t.kind === 'error',
+                 'bg-sky-700 text-white border border-sky-600': t.kind === 'info'
              }"
              x-text="t.msg"
              x-transition.opacity></div>

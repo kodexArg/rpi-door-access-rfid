@@ -1,5 +1,5 @@
 {% extends "_layout.html" %}
-{% block title %}RPi Door Access{% endblock %}
+{% block title %}Parador Km1151 — Duchas{% endblock %}
 
 {% block body %}
 <div class="min-h-screen"
@@ -9,54 +9,57 @@
          switchTab(tab) { this.activeTab = tab; }
      }">
 
-    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-6 py-0 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2.5 py-4 mr-2">
-                    <div class="h-7 w-7 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">RF</div>
-                    <span class="text-sm font-semibold tracking-tight text-slate-200">RFID Access</span>
-                </div>
+    <header class="bg-sky-700 shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+            <!-- Brand -->
+            <div class="flex items-center gap-5 py-4">
+                <span class="font-nunito text-xl font-800 tracking-tight text-white select-none leading-none" style="font-weight:800">PARADOR KM1151 — DUCHAS</span>
+
                 <!-- Tab nav -->
-                <nav class="flex h-full">
+                <nav class="hidden sm:flex h-full ml-2">
                     <button @click="switchTab('dashboard')"
-                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            class="px-4 py-4 text-sm font-semibold border-b-2 transition-colors"
                             :class="activeTab === 'dashboard'
-                                ? 'border-indigo-500 text-indigo-400'
-                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                                ? 'border-white text-white'
+                                : 'border-transparent text-sky-200 hover:text-white hover:border-sky-300'">
                         Dashboard
                     </button>
                     <button @click="switchTab('usuarios')"
-                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            class="px-4 py-4 text-sm font-semibold border-b-2 transition-colors"
                             :class="activeTab === 'usuarios'
-                                ? 'border-indigo-500 text-indigo-400'
-                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                                ? 'border-white text-white'
+                                : 'border-transparent text-sky-200 hover:text-white hover:border-sky-300'"
+                            hx-get="/ui/users/search"
+                            hx-target="#user-list-body"
+                            hx-trigger="click[activeTab!='usuarios'] once">
                         Usuarios
                     </button>
                     <button @click="switchTab('datos')"
-                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            class="px-4 py-4 text-sm font-semibold border-b-2 transition-colors"
                             :class="activeTab === 'datos'
-                                ? 'border-indigo-500 text-indigo-400'
-                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                                ? 'border-white text-white'
+                                : 'border-transparent text-sky-200 hover:text-white hover:border-sky-300'">
                         Administración
                     </button>
                     <button @click="switchTab('logs')"
-                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            class="px-4 py-4 text-sm font-semibold border-b-2 transition-colors"
                             :class="activeTab === 'logs'
-                                ? 'border-indigo-500 text-indigo-400'
-                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                                ? 'border-white text-white'
+                                : 'border-transparent text-sky-200 hover:text-white hover:border-sky-300'">
                         Logs
                     </button>
                 </nav>
             </div>
+
             <form action="/ui/logout" method="GET">
-                <button class="text-xs text-slate-500 hover:text-slate-300 transition-colors px-2 py-1">Salir</button>
+                <button class="text-xs text-sky-200 hover:text-white transition-colors px-2 py-1 rounded hover:bg-sky-600">Salir</button>
             </form>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-6 py-6">
 
-        <!-- Tab 1: Dashboard — x-show preserves DOM so SSE stays connected -->
+        <!-- Tab 1: Dashboard -->
         <div x-show="activeTab === 'dashboard'" x-cloak>
             {% include "_tab_dashboard.html" %}
         </div>
@@ -76,7 +79,7 @@
              hx-get="/ui/logs"
              hx-trigger="intersect once"
              hx-swap="innerHTML">
-            <div class="flex items-center justify-center py-20 text-slate-600 text-sm">Cargando logs...</div>
+            <div class="flex items-center justify-center py-20 text-slate-400 text-sm">Cargando logs...</div>
         </div>
 
     </main>

@@ -12,6 +12,9 @@ class User(BaseModel):
     last_name: str
     email: Optional[str] = None
     company_id: Optional[int] = None
+    document_type: Optional[str] = None
+    document_number: Optional[str] = None
+    nationality: str = "AR"
 
 class Account(BaseModel):
     account_id: str
@@ -43,6 +46,9 @@ class UserDetail(BaseModel):
     email: Optional[str] = None
     company_id: Optional[int] = None
     company_name: Optional[str] = None
+    document_type: Optional[str] = None
+    document_number: Optional[str] = None
+    nationality: str = "AR"
     accounts: List[AccountDetail] = []
 
 class AccessLogDetail(BaseModel):
