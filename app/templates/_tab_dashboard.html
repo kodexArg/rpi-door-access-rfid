@@ -1,45 +1,13 @@
-<!-- Tab 1: Dashboard — KPIs + live event feed -->
-<div class="space-y-6">
+<!-- Tab 1: Dashboard — KPIs + live event feed. KPIs update reactively via SSE `kpi` event. -->
+<div class="space-y-6"
+     hx-ext="sse"
+     sse-connect="/sse/events">
 
-    <!-- KPI Cards -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
-            <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Hoy</p>
-            <p class="text-4xl font-bold tabular-nums text-slate-100">{{ kpi.today_total }}</p>
-            <div class="flex gap-4 text-xs font-mono">
-                <span class="text-emerald-400">✓ {{ kpi.today_grant }}</span>
-                <span class="text-rose-400">✕ {{ kpi.today_deny }}</span>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
-            <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Últimos 7 días</p>
-            <p class="text-4xl font-bold tabular-nums text-slate-100">{{ kpi.last_7_days_total }}</p>
-            <div class="flex gap-4 text-xs font-mono">
-                <span class="text-emerald-400">✓ {{ kpi.last_7_days_grant }}</span>
-                <span class="text-rose-400">✕ {{ kpi.last_7_days_deny }}</span>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
-            <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Últimos 30 días</p>
-            <p class="text-4xl font-bold tabular-nums text-slate-100">{{ kpi.last_30_days_total }}</p>
-            <div class="flex gap-4 text-xs font-mono">
-                <span class="text-emerald-400">✓ {{ kpi.last_30_days_grant }}</span>
-                <span class="text-rose-400">✕ {{ kpi.last_30_days_deny }}</span>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
-            <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Este mes</p>
-            <p class="text-4xl font-bold tabular-nums text-slate-100">{{ kpi.this_month_total }}</p>
-            <div class="flex gap-4 text-xs font-mono">
-                <span class="text-emerald-400">✓ {{ kpi.this_month_grant }}</span>
-                <span class="text-rose-400">✕ {{ kpi.this_month_deny }}</span>
-            </div>
-        </div>
-
+    <!-- KPI Cards (SSE-reactive: swapped on every swipe) -->
+    <div id="kpi-cards"
+         sse-swap="kpi"
+         hx-swap="innerHTML">
+        {% include "_kpi_cards.html" %}
     </div>
 
     <!-- Live event feed -->

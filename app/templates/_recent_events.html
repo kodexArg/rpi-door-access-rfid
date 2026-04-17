@@ -1,6 +1,4 @@
 <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden"
-     hx-ext="sse"
-     sse-connect="/sse/events"
      x-data="{ live: false }"
      @htmx:sse-open.window="live = true"
      @htmx:sse-error.window="live = false"

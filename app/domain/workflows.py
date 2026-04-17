@@ -6,6 +6,13 @@ from app.infrastructure.models import AccountModel, AccessLogModel
 from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay
 from app.core.audit import log_audit
 
+
+def _broadcast_kpi(db: Session) -> None:
+    """Push recomputed KPI snapshot to all SSE subscribers. Local import avoids circular deps."""
+    from app.api.stats import compute_kpi
+    broadcaster.publish("kpi", compute_kpi(db).model_dump())
+
+
 def log_access(db: Session, account_id: str, event_type: str, reason: str = None) -> None:
     log_entry = AccessLogModel(
         account_id=account_id,
@@ -38,6 +45,7 @@ def grant_access(db: Session, account: AccountModel, green_led: LedIndicator, bu
         "credits_remaining": account.credits,
         "timestamp": utcnow().isoformat(),
     })
+    _broadcast_kpi(db)
 
 
 def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator, buzzer: Buzzer, verbose: bool = False) -> None:
@@ -62,6 +70,7 @@ def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator
         "credits_remaining": None,
         "timestamp": utcnow().isoformat(),
     })
+    _broadcast_kpi(db)
 
 
 def process_swipe(

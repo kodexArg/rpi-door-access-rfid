@@ -59,12 +59,20 @@ class KPIStats(BaseModel):
     today_total: int
     today_grant: int
     today_deny: int
+    today_success_rate: float
     last_7_days_total: int
     last_7_days_grant: int
     last_7_days_deny: int
+    last_7_days_success_rate: float
     last_30_days_total: int
     last_30_days_grant: int
     last_30_days_deny: int
+    last_30_days_success_rate: float
     this_month_total: int
     this_month_grant: int
     this_month_deny: int
+    this_month_success_rate: float
+    today_deny_not_found: int
+    today_deny_expired: int
+    today_deny_invalid: int
+    today_deny_no_credits: int

@@ -303,6 +303,8 @@ def ui_blanquear(
 
 
 def _render_event_html(event_name: str, data: dict) -> str | None:
+    if event_name == "kpi":
+        return templates.get_template("_kpi_cards.html").render(kpi=data)
     if event_name == "swipe":
         view = data
     elif event_name in ("account_created", "account_recharged"):
