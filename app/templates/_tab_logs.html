@@ -1,0 +1,89 @@
+<!-- Tab 4: Logs — registro de auditoría unificado -->
+<div class="space-y-4">
+
+    <!-- Filter bar -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+        <form hx-get="/ui/logs"
+              hx-target="#logs-container"
+              hx-swap="innerHTML"
+              hx-push-url="false"
+              class="flex flex-wrap gap-3 items-end">
+            <input type="hidden" name="page" value="1">
+
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-slate-500">Tipo de evento</label>
+                <select name="event_type"
+                        class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all" {{ 'selected' if filters.event_type == 'all' }}>Todos</option>
+                    <optgroup label="Hardware">
+                        <option value="rfid.grant"  {{ 'selected' if filters.event_type == 'rfid.grant'  }}>Acceso concedido</option>
+                        <option value="rfid.deny"   {{ 'selected' if filters.event_type == 'rfid.deny'   }}>Acceso denegado</option>
+                    </optgroup>
+                    <optgroup label="Usuarios">
+                        <option value="user.created" {{ 'selected' if filters.event_type == 'user.created' }}>Usuario creado</option>
+                        <option value="user.deleted" {{ 'selected' if filters.event_type == 'user.deleted' }}>Usuario eliminado</option>
+                    </optgroup>
+                    <optgroup label="Empresas">
+                        <option value="company.created" {{ 'selected' if filters.event_type == 'company.created' }}>Empresa creada</option>
+                        <option value="company.deleted" {{ 'selected' if filters.event_type == 'company.deleted' }}>Empresa eliminada</option>
+                    </optgroup>
+                    <optgroup label="Tarjetas">
+                        <option value="card.created"   {{ 'selected' if filters.event_type == 'card.created'   }}>Tarjeta creada</option>
+                        <option value="card.edited"    {{ 'selected' if filters.event_type == 'card.edited'    }}>Tarjeta editada</option>
+                        <option value="card.recharged" {{ 'selected' if filters.event_type == 'card.recharged' }}>Créditos recargados</option>
+                        <option value="card.unlinked"  {{ 'selected' if filters.event_type == 'card.unlinked'  }}>Tarjeta desvinculada</option>
+                        <option value="batch.blanquear"{{ 'selected' if filters.event_type == 'batch.blanquear'}}>Blanqueo</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-slate-500">Actor</label>
+                <select name="actor"
+                        class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="all"    {{ 'selected' if filters.actor == 'all'    }}>Todos</option>
+                    <option value="admin"  {{ 'selected' if filters.actor == 'admin'  }}>Admin</option>
+                    <option value="system" {{ 'selected' if filters.actor == 'system' }}>Sistema (RFID)</option>
+                </select>
+            </div>
+
+            <div class="flex flex-col gap-1 min-w-48">
+                <label class="text-xs text-slate-500">Buscar en descripción</label>
+                <input type="text" name="text" value="{{ filters.text }}"
+                       placeholder="Nombre, tarjeta, empresa..."
+                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-slate-500">Desde</label>
+                <input type="date" name="date_from" value="{{ filters.date_from }}"
+                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <div class="flex flex-col gap-1">
+                <label class="text-xs text-slate-500">Hasta</label>
+                <input type="date" name="date_to" value="{{ filters.date_to }}"
+                       class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <button type="submit"
+                    class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">
+                Filtrar
+            </button>
+
+            <button type="button"
+                    hx-get="/ui/logs"
+                    hx-target="#logs-container"
+                    hx-swap="innerHTML"
+                    class="px-3 py-2 text-slate-500 hover:text-slate-300 text-sm transition-colors">
+                Limpiar
+            </button>
+        </form>
+    </div>
+
+    <!-- Results -->
+    <div id="logs-container">
+        {% include "_logs_table.html" %}
+    </div>
+
+</div>

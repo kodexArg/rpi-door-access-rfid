@@ -1,0 +1,177 @@
+<!-- User detail panel — loaded via HTMX into #user-detail-panel -->
+<div class="p-5 space-y-5" x-data="{ showAddCard: false }">
+
+    <!-- User info (read-only) -->
+    <div class="flex items-start justify-between">
+        <div>
+            <h3 class="text-lg font-semibold text-slate-100">{{ user.first_name }} {{ user.last_name }}</h3>
+            <p class="text-sm text-slate-400 mt-0.5">
+                {{ user.company.name if user.company else 'Sin empresa' }}
+                {% if user.email %}<span class="ml-2 text-slate-500">· {{ user.email }}</span>{% endif %}
+            </p>
+        </div>
+        <button @click="showAddCard = !showAddCard"
+                class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium rounded-lg transition-colors">
+            + Agregar tarjeta
+        </button>
+    </div>
+
+    <!-- Add card form -->
+    <div x-show="showAddCard" x-cloak
+         class="bg-slate-800 border border-slate-700 rounded-xl p-4 space-y-4">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wide">Nueva tarjeta</p>
+        <form hx-post="/ui/accounts/create"
+              hx-target="#user-detail-panel"
+              hx-swap="innerHTML"
+              @submit="showAddCard = false"
+              class="space-y-3">
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <input type="hidden" name="status" value="active">
+
+            <div>
+                <label class="text-xs text-slate-400 block mb-1">UID de tarjeta</label>
+                <input type="text"
+                       name="account_id"
+                       required
+                       autocomplete="off"
+                       x-ref="cardInput"
+                       x-effect="if (showAddCard) $nextTick(() => $refs.cardInput && $refs.cardInput.focus())"
+                       placeholder="Pasar tarjeta por lector USB o escribir..."
+                       class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <p class="text-xs text-slate-600 mt-1">El lector USB escribe el UID automáticamente en este campo.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Créditos</label>
+                    <input type="number" name="credits" value="10" min="0"
+                           class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">Vencimiento</label>
+                    <input type="datetime-local"
+                           name="expiration_date"
+                           id="add-card-expiry-{{ user.id }}"
+                           class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-1">
+                <button type="submit"
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors">
+                    Guardar tarjeta
+                </button>
+                <button type="button"
+                        @click="showAddCard = false"
+                        class="px-4 py-2 text-slate-400 hover:text-slate-200 text-sm transition-colors">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Cards table -->
+    {% if accounts %}
+    <div class="bg-slate-800/50 rounded-xl overflow-hidden border border-slate-700/50">
+        <table class="w-full">
+            <thead>
+                <tr class="text-left text-xs font-medium uppercase tracking-wider text-slate-500 border-b border-slate-700 align-middle">
+                    <th class="px-4 py-3">UID</th>
+                    <th class="px-4 py-3">Estado</th>
+                    <th class="px-4 py-3">Créditos</th>
+                    <th class="px-4 py-3">Vence</th>
+                    <th class="px-4 py-3 text-right">Acciones</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700/50">
+                {% for acc in accounts %}
+                <tr class="hover:bg-slate-700/20 transition-colors align-middle" x-data="{ editMode: false }">
+                    <td class="px-4 py-3 font-mono text-xs text-slate-300">{{ acc.account_id }}</td>
+                    <td class="px-4 py-3">
+                        <span class="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium
+                            {{ 'bg-emerald-500/10 text-emerald-400 ring-1 ring-inset ring-emerald-500/20' if acc.status == 'active' else 'bg-rose-500/10 text-rose-400 ring-1 ring-inset ring-rose-500/20' }}">
+                            <span class="h-1.5 w-1.5 rounded-full {{ 'bg-emerald-400 animate-pulse' if acc.status == 'active' else 'bg-rose-400' }}"></span>
+                            {{ acc.status }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 font-mono text-sm font-bold text-slate-200">{{ acc.credits }}</td>
+                    <td class="px-4 py-3 text-xs text-slate-400 font-mono">{{ acc.expiration_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-end gap-2" x-show="!editMode">
+                            <!-- Recharge -->
+                            <form hx-post="/ui/accounts/{{ acc.account_id }}/recharge"
+                                  hx-target="#user-detail-panel"
+                                  hx-swap="innerHTML"
+                                  class="flex gap-1">
+                                <input type="number" name="amount" value="5" min="1"
+                                       class="w-14 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <button type="submit"
+                                        class="px-2 py-1 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded text-xs transition-colors">
+                                    +
+                                </button>
+                            </form>
+                            <button @click="editMode = true"
+                                    class="text-xs text-slate-500 hover:text-slate-300 px-2 py-1 rounded hover:bg-slate-700 transition-colors">
+                                Editar
+                            </button>
+                            <button hx-delete="/ui/accounts/{{ acc.account_id }}"
+                                    hx-target="#user-detail-panel"
+                                    hx-swap="innerHTML"
+                                    hx-confirm="¿Desvincular esta tarjeta del usuario?"
+                                    class="text-xs text-rose-500 hover:text-rose-400 px-2 py-1 rounded hover:bg-slate-700 transition-colors">
+                                ✕
+                            </button>
+                        </div>
+                        <!-- Edit inline form -->
+                        <div x-show="editMode" x-cloak class="flex items-center gap-1 justify-end flex-wrap">
+                            <form hx-post="/ui/accounts/{{ acc.account_id }}/edit"
+                                  hx-target="#user-detail-panel"
+                                  hx-swap="innerHTML"
+                                  @submit="editMode = false"
+                                  class="flex gap-1 items-center flex-wrap">
+                                <select name="status"
+                                        class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                    <option value="active" {{ 'selected' if acc.status == 'active' }}>active</option>
+                                    <option value="inactive" {{ 'selected' if acc.status == 'inactive' }}>inactive</option>
+                                </select>
+                                <input type="number" name="credits" value="{{ acc.credits }}" min="0"
+                                       class="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <input type="datetime-local" name="expiration_date"
+                                       value="{{ acc.expiration_date.strftime('%Y-%m-%dT%H:%M') }}"
+                                       class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <button type="submit"
+                                        class="px-2 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-xs transition-colors">
+                                    OK
+                                </button>
+                                <button type="button"
+                                        @click="editMode = false"
+                                        class="px-2 py-1 text-slate-500 hover:text-slate-300 rounded text-xs transition-colors">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-8 text-sm text-slate-600">
+        Este usuario no tiene tarjetas asignadas.
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+// Set default expiry to now + 24h when the panel loads
+(function() {
+    const input = document.getElementById('add-card-expiry-{{ user.id }}');
+    if (input && !input.value) {
+        const d = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        d.setSeconds(0, 0);
+        input.value = d.toISOString().slice(0, 16);
+    }
+})();
+</script>

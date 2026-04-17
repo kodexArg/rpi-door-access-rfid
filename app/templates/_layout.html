@@ -16,8 +16,14 @@
                     this.toasts.push({ id, msg, kind: kind || 'info' });
                     setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 4000);
                 } }"
-      @account-created.window="pushToast('Account created', 'success')"
-      @htmx:response-error.window="pushToast('Request failed', 'error')">
+      @account-created.window="pushToast('Tarjeta creada', 'success')"
+      @htmx:response-error.window="
+          if (event.detail.xhr && event.detail.xhr.status === 401) {
+              window.location.href = '/login';
+          } else {
+              pushToast('Error en la solicitud', 'error');
+          }
+      ">
 
 {% block body %}{% endblock %}
 

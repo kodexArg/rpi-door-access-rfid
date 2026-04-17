@@ -1,10 +1,11 @@
 import datetime
+from app.core.time import utcnow
 
 def test_create_account(client, db_session):
     payload = {
         "account_id": "ABC1",
         "status": "active",
-        "expiration_date": (datetime.datetime.utcnow() + datetime.timedelta(days=5)).isoformat(),
+        "expiration_date": (utcnow() + datetime.timedelta(days=5)).isoformat(),
         "credits": 10
     }
     response = client.post("/api/accounts", json=payload)
@@ -17,7 +18,7 @@ def test_recharge_account(client, db_session):
     payload = {
         "account_id": "ABC2",
         "status": "active",
-        "expiration_date": (datetime.datetime.utcnow() + datetime.timedelta(days=5)).isoformat(),
+        "expiration_date": (utcnow() + datetime.timedelta(days=5)).isoformat(),
         "credits": 10
     }
     client.post("/api/accounts", json=payload)

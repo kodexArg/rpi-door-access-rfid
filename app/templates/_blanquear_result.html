@@ -1,0 +1,10 @@
+{% if count > 0 %}
+<div class="mt-3 flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-3">
+    <span>✓</span>
+    <span>{{ count }} tarjeta{{ 's' if count != 1 else '' }} desvinculada{{ 's' if count != 1 else '' }} correctamente.</span>
+</div>
+{% else %}
+<div class="mt-3 flex items-center gap-2 text-sm text-slate-500 bg-slate-800 border border-slate-700 rounded-lg px-4 py-3">
+    <span>No se encontraron tarjetas con esos UIDs en el sistema.</span>
+</div>
+{% endif %}

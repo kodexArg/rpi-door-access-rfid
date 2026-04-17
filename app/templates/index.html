@@ -1,61 +1,83 @@
 {% extends "_layout.html" %}
-{% block title %}RPi Door Access — Dashboard{% endblock %}
+{% block title %}RPi Door Access{% endblock %}
 
 {% block body %}
-<div class="min-h-screen">
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">RF</div>
-                <h1 class="text-lg font-semibold tracking-tight">RFID Door Access</h1>
+<div class="min-h-screen"
+     x-data="{
+         activeTab: 'dashboard',
+         selectedUserId: null,
+         switchTab(tab) { this.activeTab = tab; }
+     }">
+
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-6 py-0 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2.5 py-4 mr-2">
+                    <div class="h-7 w-7 rounded-md bg-indigo-600 flex items-center justify-center text-white text-xs font-bold">RF</div>
+                    <span class="text-sm font-semibold tracking-tight text-slate-200">RFID Access</span>
+                </div>
+                <!-- Tab nav -->
+                <nav class="flex h-full">
+                    <button @click="switchTab('dashboard')"
+                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            :class="activeTab === 'dashboard'
+                                ? 'border-indigo-500 text-indigo-400'
+                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                        Dashboard
+                    </button>
+                    <button @click="switchTab('usuarios')"
+                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            :class="activeTab === 'usuarios'
+                                ? 'border-indigo-500 text-indigo-400'
+                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                        Usuarios
+                    </button>
+                    <button @click="switchTab('datos')"
+                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            :class="activeTab === 'datos'
+                                ? 'border-indigo-500 text-indigo-400'
+                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                        Administración
+                    </button>
+                    <button @click="switchTab('logs')"
+                            class="px-4 py-4 text-sm font-medium border-b-2 transition-colors"
+                            :class="activeTab === 'logs'
+                                ? 'border-indigo-500 text-indigo-400'
+                                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-600'">
+                        Logs
+                    </button>
+                </nav>
             </div>
             <form action="/ui/logout" method="GET">
-                <button class="text-sm text-slate-400 hover:text-slate-200 transition-colors">Logout</button>
+                <button class="text-xs text-slate-500 hover:text-slate-300 transition-colors px-2 py-1">Salir</button>
             </form>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main class="max-w-7xl mx-auto px-6 py-6">
 
-        <section class="lg:col-span-2 space-y-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-xl font-semibold">Accounts</h2>
-                    <p class="text-sm text-slate-400 mt-1">{{ accounts|length }} registered card{{ '' if accounts|length == 1 else 's' }}</p>
-                </div>
-                {% include "_create_account_modal.html" %}
-            </div>
+        <!-- Tab 1: Dashboard — x-show preserves DOM so SSE stays connected -->
+        <div x-show="activeTab === 'dashboard'" x-cloak>
+            {% include "_tab_dashboard.html" %}
+        </div>
 
-            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-                <table class="w-full">
-                    <thead class="bg-slate-900/80">
-                        <tr class="text-left text-xs font-medium uppercase tracking-wider text-slate-400">
-                            <th class="px-4 py-3">Card ID</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">Expiration</th>
-                            <th class="px-4 py-3">Credits</th>
-                            <th class="px-4 py-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="accounts-tbody">
-                        {% for acc in accounts %}
-                            {% include "_account_row.html" %}
-                        {% endfor %}
-                        {% if not accounts %}
-                        <tr id="accounts-empty">
-                            <td colspan="5" class="px-4 py-10 text-center text-sm text-slate-500">
-                                No accounts yet. Add one with the button above.
-                            </td>
-                        </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        <!-- Tab 2: Usuarios -->
+        <div x-show="activeTab === 'usuarios'" x-cloak>
+            {% include "_tab_users.html" %}
+        </div>
 
-        <aside class="lg:col-span-1">
-            {% include "_recent_events.html" %}
-        </aside>
+        <!-- Tab 3: Datos -->
+        <div x-show="activeTab === 'datos'" x-cloak>
+            {% include "_tab_data.html" %}
+        </div>
+
+        <!-- Tab 4: Logs — lazy loaded on first reveal -->
+        <div x-show="activeTab === 'logs'" x-cloak
+             hx-get="/ui/logs"
+             hx-trigger="intersect once"
+             hx-swap="innerHTML">
+            <div class="flex items-center justify-center py-20 text-slate-600 text-sm">Cargando logs...</div>
+        </div>
 
     </main>
 </div>

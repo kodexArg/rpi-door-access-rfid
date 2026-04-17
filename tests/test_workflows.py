@@ -1,15 +1,15 @@
-import pytest
 import datetime
 from app.domain.workflows import process_swipe
 from app.infrastructure.models import AccountModel
 from app.infrastructure.hardware.mock_impl import MockLedIndicator, MockBuzzer, MockDoorRelay
+from app.core.time import utcnow
 
 def test_process_swipe_grant(db_session):
     # Setup account
     acc = AccountModel(
         account_id="1234",
         status="active",
-        expiration_date=datetime.datetime.utcnow() + datetime.timedelta(days=10),
+        expiration_date=utcnow() + datetime.timedelta(days=10),
         credits=5
     )
     db_session.add(acc)
@@ -39,7 +39,7 @@ def test_process_swipe_deny_no_credits(db_session):
     acc = AccountModel(
         account_id="5678",
         status="active",
-        expiration_date=datetime.datetime.utcnow() + datetime.timedelta(days=10),
+        expiration_date=utcnow() + datetime.timedelta(days=10),
         credits=0
     )
     db_session.add(acc)
@@ -61,7 +61,7 @@ def test_process_swipe_invalid_status(db_session):
     acc = AccountModel(
         account_id="9999",
         status="inactive",
-        expiration_date=datetime.datetime.utcnow() + datetime.timedelta(days=10),
+        expiration_date=utcnow() + datetime.timedelta(days=10),
         credits=5
     )
     db_session.add(acc)

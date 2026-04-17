@@ -1,0 +1,148 @@
+<!-- Tab 3: Administración — Usuarios, Empresas y operaciones de mantenimiento -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- Section A: Usuarios -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-800">
+            <h3 class="text-sm font-semibold text-slate-200">Usuarios</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Gestión de clientes del sistema</p>
+        </div>
+
+        <!-- Create user form -->
+        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/50">
+            <form hx-post="/ui/users/create"
+                  hx-target="#user-list-body"
+                  hx-swap="afterbegin"
+                  hx-on::after-request="if(event.detail.successful) this.reset()"
+                  class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" name="first_name" required placeholder="Nombre"
+                           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" name="last_name" required placeholder="Apellido"
+                           class="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <input type="email" name="email" placeholder="Email (opcional)"
+                       class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="flex gap-2">
+                    <select name="company_id" required
+                            class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="" disabled selected>Empresa...</option>
+                        {% for c in companies %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit"
+                            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
+                        + Crear
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- User list -->
+        <div id="user-list-body" class="divide-y divide-slate-800 max-h-96 overflow-y-auto">
+            {% include "_user_list_editable.html" %}
+        </div>
+    </div>
+
+    <!-- Section B: Empresas -->
+    <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div class="px-5 py-4 border-b border-slate-800">
+            <h3 class="text-sm font-semibold text-slate-200">Empresas</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Grupos de clientes</p>
+        </div>
+
+        <!-- Create company form -->
+        <div class="px-5 py-4 border-b border-slate-800 bg-slate-900/50">
+            <form hx-post="/ui/companies/create"
+                  hx-target="#company-list-body"
+                  hx-swap="innerHTML"
+                  hx-on::after-request="if(event.detail.successful) this.reset()"
+                  class="flex gap-2">
+                <input type="text" name="name" required placeholder="Nombre de la empresa"
+                       class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <button type="submit"
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap">
+                    + Crear
+                </button>
+            </form>
+        </div>
+
+        <!-- Company list -->
+        <div id="company-list-body" class="divide-y divide-slate-800 max-h-96 overflow-y-auto">
+            {% include "_company_list_editable.html" %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Recuperar tarjetas abandonadas -->
+<div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl p-5"
+     x-data="{ scanning: false, scannedCards: [], scanInput: '' }">
+
+    <div class="flex items-center justify-between">
+        <div>
+            <h3 class="text-sm font-medium text-slate-300">Recuperar tarjetas abandonadas</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Escaneá fichas encontradas en el recipiente y luego blanqueá para desvincularlas de todos los usuarios.</p>
+        </div>
+        <button @click="scanning = !scanning"
+                class="text-xs px-3 py-1.5 rounded-lg border border-slate-700 text-slate-400 hover:text-slate-200 hover:border-slate-500 transition-colors">
+            <span x-text="scanning ? 'Cerrar' : 'Abrir'"></span>
+        </button>
+    </div>
+
+    <div x-show="scanning" x-cloak class="mt-4 space-y-4">
+        <div class="flex gap-2">
+            <input x-model="scanInput"
+                   @keydown.enter.prevent="
+                       const uid = scanInput.trim();
+                       if (uid && !scannedCards.includes(uid)) scannedCards.push(uid);
+                       scanInput = '';
+                   "
+                   placeholder="Pasar tarjeta por lector USB o escribir UID..."
+                   autocomplete="off"
+                   class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm font-mono text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button @click="
+                       const uid = scanInput.trim();
+                       if (uid && !scannedCards.includes(uid)) scannedCards.push(uid);
+                       scanInput = '';
+                   "
+                    class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-lg text-sm transition-colors">
+                Agregar
+            </button>
+        </div>
+
+        <div x-show="scannedCards.length > 0" class="bg-slate-800 rounded-lg p-3 space-y-1">
+            <p class="text-xs text-slate-500 mb-2">Tarjetas a blanquear:</p>
+            <template x-for="uid in scannedCards" :key="uid">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-mono text-slate-300" x-text="uid"></span>
+                    <button @click="scannedCards = scannedCards.filter(c => c !== uid)"
+                            class="text-slate-600 hover:text-rose-400 text-xs ml-2">✕</button>
+                </div>
+            </template>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <form hx-post="/ui/accounts/blanquear"
+                  hx-target="#blanquear-result"
+                  hx-swap="innerHTML">
+                <input type="hidden" name="account_ids" :value="scannedCards.join(',')">
+                <button type="submit"
+                        :disabled="scannedCards.length === 0"
+                        class="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                        @click="if (scannedCards.length === 0) $event.preventDefault()">
+                    Blanquear (<span x-text="scannedCards.length"></span>)
+                </button>
+            </form>
+            <button @click="scannedCards = []; scanInput = '';"
+                    x-show="scannedCards.length > 0"
+                    class="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                Limpiar lista
+            </button>
+        </div>
+
+        <div id="blanquear-result"></div>
+    </div>
+
+</div>

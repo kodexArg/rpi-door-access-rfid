@@ -1,0 +1,13 @@
+<div id="user-row-{{ u.id }}" class="flex items-center justify-between px-5 py-3 hover:bg-slate-800/30 transition-colors">
+    <div>
+        <p class="text-sm text-slate-200">{{ u.first_name }} {{ u.last_name }}</p>
+        <p class="text-xs text-slate-500">{{ u.company.name if u.company else '—' }}{% if u.email %} · {{ u.email }}{% endif %}</p>
+    </div>
+    <button hx-delete="/ui/users/{{ u.id }}"
+            hx-target="#user-row-{{ u.id }}"
+            hx-swap="outerHTML"
+            hx-confirm="¿Eliminar a {{ u.first_name }} {{ u.last_name }}?"
+            class="text-xs text-slate-600 hover:text-rose-400 px-2 py-1 rounded hover:bg-slate-800 transition-colors">
+        Eliminar
+    </button>
+</div>

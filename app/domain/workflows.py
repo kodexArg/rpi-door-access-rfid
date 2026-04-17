@@ -1,16 +1,17 @@
-import datetime
-from typing import Tuple, Dict, Any
+from typing import Dict, Any
 from sqlalchemy.orm import Session
 from app.core.events import broadcaster
+from app.core.time import utcnow
 from app.infrastructure.models import AccountModel, AccessLogModel
 from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay
+from app.core.audit import log_audit
 
 def log_access(db: Session, account_id: str, event_type: str, reason: str = None) -> None:
     log_entry = AccessLogModel(
         account_id=account_id,
         event_type=event_type,
         reason=reason,
-        timestamp=datetime.datetime.utcnow()
+        timestamp=utcnow()
     )
     db.add(log_entry)
     db.commit()
@@ -27,12 +28,15 @@ def grant_access(db: Session, account: AccountModel, green_led: LedIndicator, bu
     account.credits -= 1
     db.commit()
     log_access(db, account.account_id, "grant")
+    log_audit(db, "rfid.grant", "system",
+              f"Acceso concedido — tarjeta {account.account_id}",
+              {"account_id": account.account_id, "credits_remaining": account.credits})
     broadcaster.publish("swipe", {
         "account_id": account.account_id,
         "event_type": "grant",
         "reason": None,
         "credits_remaining": account.credits,
-        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "timestamp": utcnow().isoformat(),
     })
 
 
@@ -48,12 +52,15 @@ def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator
     time.sleep(1.0)
     red_led.off()
     log_access(db, account_id, "deny", reason)
+    log_audit(db, "rfid.deny", "system",
+              f"Acceso denegado — tarjeta {account_id} ({reason})",
+              {"account_id": account_id, "reason": reason})
     broadcaster.publish("swipe", {
         "account_id": account_id,
         "event_type": "deny",
         "reason": reason,
         "credits_remaining": None,
-        "timestamp": datetime.datetime.utcnow().isoformat(),
+        "timestamp": utcnow().isoformat(),
     })
 
 
@@ -85,7 +92,7 @@ def process_swipe(
         deny_access(db, card_id, "Invalid Status", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Invalid Status"}
 
-    if account.expiration_date < datetime.datetime.utcnow():
+    if account.expiration_date < utcnow():
         deny_access(db, card_id, "Expired", red_led, buzzer, verbose)
         return {"status": "denied", "reason": "Expired"}
 
