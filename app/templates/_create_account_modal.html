@@ -1,0 +1,73 @@
+<div x-data="{ open: false }"
+     @account-created.window="open = false"
+     @keydown.escape.window="open = false">
+
+    <button type="button" @click="open = true"
+            class="inline-flex items-center gap-2 rounded-md bg-indigo-600 hover:bg-indigo-500
+                   px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors
+                   focus:outline-none focus:ring-2 focus:ring-indigo-400">
+        <span class="text-lg leading-none">+</span> New card
+    </button>
+
+    <div x-show="open" x-cloak
+         class="fixed inset-0 z-40 flex items-center justify-center p-4"
+         x-transition.opacity>
+        <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" @click="open = false"></div>
+
+        <div class="relative z-10 w-full max-w-lg rounded-xl bg-slate-900 border border-slate-800 shadow-2xl"
+             @click.stop>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+                <h3 class="text-lg font-semibold">Add new card</h3>
+                <button type="button" @click="open = false"
+                        class="text-slate-400 hover:text-slate-200 text-2xl leading-none">&times;</button>
+            </div>
+
+            <form hx-post="/ui/accounts/create"
+                  hx-target="#accounts-tbody"
+                  hx-swap="beforeend"
+                  hx-on::after-request="if(event.detail.successful) this.reset()"
+                  class="px-6 py-5 space-y-4">
+                <div>
+                    <label for="account_id" class="block text-sm font-medium text-slate-300 mb-1">Card ID</label>
+                    <input id="account_id" type="text" name="account_id" required
+                           class="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 font-mono text-sm
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-slate-300 mb-1">Status</label>
+                        <select id="status" name="status"
+                                class="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 text-sm
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="credits" class="block text-sm font-medium text-slate-300 mb-1">Initial credits</label>
+                        <input id="credits" type="number" name="credits" value="10" required
+                               class="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="expiration_date" class="block text-sm font-medium text-slate-300 mb-1">Expiration</label>
+                    <input id="expiration_date" type="datetime-local" name="expiration_date" required
+                           class="w-full rounded-md bg-slate-950 border border-slate-700 px-3 py-2 text-sm
+                                  focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" @click="open = false"
+                            class="rounded-md px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="rounded-md bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-medium text-white">
+                        Create
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

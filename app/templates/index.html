@@ -1,87 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPi Door Access Dashboard</title>
-    <!-- Simple bootstrap for quick UI -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+{% extends "_layout.html" %}
+{% block title %}RPi Door Access — Dashboard{% endblock %}
 
-<div class="container mt-5">
-    <h1 class="mb-4">RFID Door Access Control</h1>
-    
-    <div class="card mb-4">
-        <div class="card-header">Add New Card</div>
-        <div class="card-body">
-            <form action="/ui/accounts/create" method="POST">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label for="account_id" class="form-label">Card ID</label>
-                        <input type="text" class="form-control" name="account_id" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select class="form-select" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="credits" class="form-label">Initial Credits</label>
-                        <input type="number" class="form-control" name="credits" value="10" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="expiration_date" class="form-label">Expiration Date</label>
-                        <input type="datetime-local" class="form-control" name="expiration_date" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary mt-3">Add Account</button>
+{% block body %}
+<div class="min-h-screen">
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">RF</div>
+                <h1 class="text-lg font-semibold tracking-tight">RFID Door Access</h1>
+            </div>
+            <form action="/ui/logout" method="GET">
+                <button class="text-sm text-slate-400 hover:text-slate-200 transition-colors">Logout</button>
             </form>
         </div>
-    </div>
+    </header>
 
-    <div class="card">
-        <div class="card-header">Managed Accounts</div>
-        <div class="card-body">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Expiration</th>
-                        <th>Credits</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for acc in accounts %}
-                    <tr>
-                        <td>{{ acc.account_id }}</td>
-                        <td>
-                            <span class="badge {% if acc.status == 'active' %}bg-success{% else %}bg-danger{% endif %}">
-                                {{ acc.status|capitalize }}
-                            </span>
-                        </td>
-                        <td>{{ acc.expiration_date }}</td>
-                        <td>{{ acc.credits }}</td>
-                        <td>
-                            <form action="/ui/accounts/{{ acc.account_id }}/recharge" method="POST" class="d-inline">
-                                <input type="hidden" name="amount" value="5">
-                                <button type="submit" class="btn btn-sm btn-outline-success">+5 Credits</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% if not accounts %}
-                    <tr><td colspan="5" class="text-center">No accounts found.</td></tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <section class="lg:col-span-2 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold">Accounts</h2>
+                    <p class="text-sm text-slate-400 mt-1">{{ accounts|length }} registered card{{ '' if accounts|length == 1 else 's' }}</p>
+                </div>
+                {% include "_create_account_modal.html" %}
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-slate-900/80">
+                        <tr class="text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                            <th class="px-4 py-3">Card ID</th>
+                            <th class="px-4 py-3">Status</th>
+                            <th class="px-4 py-3">Expiration</th>
+                            <th class="px-4 py-3">Credits</th>
+                            <th class="px-4 py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accounts-tbody">
+                        {% for acc in accounts %}
+                            {% include "_account_row.html" %}
+                        {% endfor %}
+                        {% if not accounts %}
+                        <tr id="accounts-empty">
+                            <td colspan="5" class="px-4 py-10 text-center text-sm text-slate-500">
+                                No accounts yet. Add one with the button above.
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <aside class="lg:col-span-1">
+            {% include "_recent_events.html" %}
+        </aside>
+
+    </main>
 </div>
-
-</body>
-</html>
+{% endblock %}

@@ -1,5 +1,6 @@
 import asyncio
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.infrastructure.database import init_db, SessionLocal
 from app.api.endpoints import router as endpoints_router
 from app.api.auth import router as auth_router
@@ -13,6 +14,8 @@ from app.core.config import settings
 init_db()
 
 app = FastAPI(title="RPi RFID Door Access API")
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(auth_router)
 app.include_router(endpoints_router)

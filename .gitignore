@@ -37,3 +37,7 @@ ENV/
 .vscode/
 *.swp
 .DS_Store
+
+# Tailwind standalone binary (downloaded by scripts/build-css.sh)
+scripts/bin/
+app/static/dist/

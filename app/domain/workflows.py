@@ -1,6 +1,7 @@
 import datetime
 from typing import Tuple, Dict, Any
 from sqlalchemy.orm import Session
+from app.core.events import broadcaster
 from app.infrastructure.models import AccountModel, AccessLogModel
 from app.infrastructure.hardware.interfaces import LedIndicator, Buzzer, DoorRelay
 
@@ -26,6 +27,13 @@ def grant_access(db: Session, account: AccountModel, green_led: LedIndicator, bu
     account.credits -= 1
     db.commit()
     log_access(db, account.account_id, "grant")
+    broadcaster.publish("swipe", {
+        "account_id": account.account_id,
+        "event_type": "grant",
+        "reason": None,
+        "credits_remaining": account.credits,
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+    })
 
 
 def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator, buzzer: Buzzer, verbose: bool = False) -> None:
@@ -40,6 +48,13 @@ def deny_access(db: Session, account_id: str, reason: str, red_led: LedIndicator
     time.sleep(1.0)
     red_led.off()
     log_access(db, account_id, "deny", reason)
+    broadcaster.publish("swipe", {
+        "account_id": account_id,
+        "event_type": "deny",
+        "reason": reason,
+        "credits_remaining": None,
+        "timestamp": datetime.datetime.utcnow().isoformat(),
+    })
 
 
 def process_swipe(
