@@ -1,6 +1,6 @@
 {% if users %}
     {% for u in users %}
-    <div class="px-4 py-3 cursor-pointer hover:bg-slate-800/60 transition-colors"
+    <div class="px-4 py-3 cursor-pointer select-none hover:bg-slate-800/60 transition-colors"
          hx-get="/ui/users/{{ u.id }}/detail"
          hx-target="#user-detail-panel"
          hx-swap="innerHTML"

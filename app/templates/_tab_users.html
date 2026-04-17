@@ -15,8 +15,11 @@
                    hx-swap="innerHTML"
                    class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
         </div>
-        <div id="user-list-body" class="overflow-y-auto flex-1 divide-y divide-slate-800">
-            {% include "_user_search_results.html" %}
+        <div id="user-list-body"
+             class="overflow-y-auto flex-1 divide-y divide-slate-800"
+             hx-get="/ui/users/search"
+             hx-trigger="load"
+             hx-swap="innerHTML">
         </div>
     </div>
 
